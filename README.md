@@ -6,4 +6,4 @@ The planning of the APG Use Case can be found [here](https://github.com/philippk
 ## Milestones:
 | Milestone | Due Date | Done |
 | --------- | -------- | ---- |
-| [Evaluation](https://github.com/philippks/ma-planning-aoi/milestone/1) | 2018-09-02 |
+| [PostgreSQL AOI Prototype](https://github.com/philippks/ma-planning-aoi/milestone/1) | 2018-09-02 |
