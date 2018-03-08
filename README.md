@@ -1,9 +1,13 @@
-# Master Thesis - Project Management
+# Areas of Interests for OpenstreetMap
 
-This repository contains the planning concerning the AOI Use Case of my master thesis.
-The planning of the APG Use Case can be found [here](https://github.com/philippks/ma-planning-apg).
+This repository contains the source code of my thesis, which aims to evaluate the use of BigData technologies for Spatial GeoData. As use case, Areas of Interests (AOI) based on OpenstreeMap data are generated.
 
-## Milestones:
-| Milestone | Due Date | Done |
-| --------- | -------- | ---- |
-| [PostgreSQL AOI Prototype](https://github.com/philippks/ma-planning-aoi/milestone/1) | 2018-09-02 |
+> AOI have been introduced in GMaps around mid 2016. They highlight places with the highest concentration of restaurants, shops and bars in an light orange style.
+
+Approach:
+
+1) Generate AOI with traditional DBMS PostgreSQL + Postgis (**work in progress**)
+2) Evaluate applicability of implementation and identify bottlenecks
+3) Evaluate suitable BigData technology stack
+4) Generate AOI with evaluated BigData framework
+5) ...
