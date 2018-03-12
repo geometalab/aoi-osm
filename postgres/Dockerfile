@@ -3,6 +3,7 @@ FROM jupyter/base-notebook:latest
 RUN conda install --yes --no-pin \
       geopandas \
       folium
+      osmnx
 
 USER root
 
