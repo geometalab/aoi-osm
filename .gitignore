@@ -72,6 +72,7 @@ dockerspawner.tar.gz
 *.jupyter/
 *.ipython/
 .bash_history
+data/
 
 cache/
 
