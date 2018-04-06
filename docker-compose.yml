@@ -1,0 +1,33 @@
+version: '3'
+services:
+  webapp:
+    build: ./webapp
+    env_file: ./webapp/.env
+    volumes:
+      - ./webapp:/webapp/
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+
+  notebooks:
+    build: ./notebooks
+    environment:
+      - PGHOST=postgres
+      - PGUSER=postgres
+    volumes:
+      - ./data/:/data/
+      - ./notebooks/notebooks://home/jovyan/
+    ports:
+      - "8888:8888"
+    depends_on:
+      - postgres
+
+  postgres:
+    image: mdillon/postgis:10
+    environment:
+      - POSTGRES_PASSWORD=
+    volumes:
+      - ./postgres_storage/:/var/lib/postgresql/data/
+    ports:
+      - "54320:5432"

@@ -1,0 +1,38 @@
+<html>
+    <head>
+        <title>AOI with OpenStreetMaps</title>
+
+        <style>
+          .aoi {
+            width: 100%;
+            height: 60%;
+          }
+        </style>
+    </head>
+    <body>
+        <h1>Generate AOI</h1>
+
+        <form action="" method="post">
+          {{ form.hidden_tag() }}
+          <p>
+          {{ form.location.label }}<br>
+          {{ form.location(size=32) }}
+          </p>
+
+          <p>
+          {{ form.tags.label }}<br>
+          {{ form.tags(size=32) }}
+          </p>
+          <p>{{ form.submit() }}</p>
+        </form>
+
+
+        {% if aoi_html: %}
+          <h2>AOI generated</h2>
+
+          <div class="aoi">
+            {{ aoi_html | safe }}
+          </div>
+        {% endif %}
+    </body>
+</html>
