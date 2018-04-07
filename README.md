@@ -1,6 +1,6 @@
-# Areas of Interests for OpenstreetMap
+# Areas-of-Interest for OpenStreetMap
 
-This repository contains the source code of my thesis, which aims to evaluate the use of BigData technologies for Spatial GeoData. As use case, Areas of Interests (AOI) based on OpenstreeMap data are generated.
+This repository contains the source code of my thesis, which aims to evaluate the use of big data technologies for spatial Geodata. As use case, Areas-of-Interest (AOI) based on OpenStreeMap data are generated.
 
 > AOI have been introduced in GMaps around mid 2016. They highlight places with the highest concentration of restaurants, shops and bars in an light orange style.
 
