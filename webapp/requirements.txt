@@ -1,3 +1,6 @@
 flask
 flask-wtf
+flask-bootstrap
 folium
+geopandas
+psycopg2

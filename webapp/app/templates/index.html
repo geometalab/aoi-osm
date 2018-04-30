@@ -1,38 +1,30 @@
-<html>
-    <head>
-        <title>AOI with OpenStreetMaps</title>
+{% import 'bootstrap/wtf.html' as wtf %}
 
-        <style>
-          .aoi {
-            width: 100%;
-            height: 60%;
-          }
-        </style>
-    </head>
-    <body>
-        <h1>Generate AOI</h1>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 
-        <form action="" method="post">
-          {{ form.hidden_tag() }}
-          <p>
-          {{ form.location.label }}<br>
-          {{ form.location(size=32) }}
-          </p>
+{% extends "bootstrap/base.html" %}
 
-          <p>
-          {{ form.tags.label }}<br>
-          {{ form.tags(size=32) }}
-          </p>
-          <p>{{ form.submit() }}</p>
-        </form>
+{% block content %}
+<div class="container">
+  <h1>AOI with OpenStreetMaps</h1>
 
+  <form class="form form-horizontal" method="post" role="form">
+    {{ form.hidden_tag() }}
+    {{ wtf.form_errors(form, hiddens="only") }}
 
-        {% if aoi_html: %}
-          <h2>AOI generated</h2>
+    <div class="row">
+      <div class="col-md-4">
+      {{ wtf.form_field(form.location) }}
+      </div>
 
-          <div class="aoi">
-            {{ aoi_html | safe }}
-          </div>
-        {% endif %}
-    </body>
-</html>
+      <div class="col-md-offset-1 col-md-4">
+      {{ wtf.form_field(form.custom_location) }}
+      </div>
+    </div>
+
+    {{ wtf.form_field(form.tags) }}
+
+    {{ wtf.form_field(form.submit) }}
+  </form>
+</div>
+{% endblock %}

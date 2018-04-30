@@ -1,5 +1,6 @@
 import os
 
+
 class Config(object):
     DEVELOPMENT = True
     TEMPLATES_AUTO_RELOAD = True
