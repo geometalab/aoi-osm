@@ -22,7 +22,19 @@
       </div>
     </div>
 
-    {{ wtf.form_field(form.tags) }}
+    <div class="row">
+      {{ wtf.form_field(form.tags) }}
+    </div>
+
+    <div class="row">
+      <div class="col-md-4">
+      {{ wtf.form_field(form.dbscan_eps) }}
+      </div>
+
+      <div class="col-md-offset-1 col-md-4">
+      {{ wtf.form_field(form.dbscan_minpoints) }}
+      </div>
+    </div>
 
     {{ wtf.form_field(form.submit) }}
   </form>

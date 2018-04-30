@@ -3,4 +3,4 @@ flask-wtf
 flask-bootstrap
 folium
 geopandas
-psycopg2
+psycopg2-binary

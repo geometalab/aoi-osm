@@ -1,6 +1,69 @@
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
+
 {% extends "bootstrap/base.html" %}
 
-
 {% block content %}
-{{ aoi_html | safe }}
+<div class="container">
+  <div class="row">
+    <h2>
+      1. Get All Polygons with Tags
+    </h2>
+
+    <div class="step polygons">
+      <div class="description">
+        Select polygons which:
+        <ul>
+          <li>have a given tag</li>
+          <li>contain a node with a given tag (and building = true)</li>
+          <li>have not the attribute access = private</li>
+        </ul>
+      </div>
+
+      <div class="map">
+        {{ aoi_generator.polygons_html() | safe }}
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <h2>2. Cluster Polygons with DBSCAN</h2>
+
+    <div class="step cluster">
+      <div class="description">
+        Cluster polygons by using DBSCAN algorithm with eps = {{
+        aoi_generator.dbscan_eps }} and minpoints = {{
+        aoi_generator.dbscan_minpoints }}
+      </div>
+
+      <div class="map">
+        {{ aoi_generator.clusters_html() | safe }}
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <h2>3. Create Concave Hulls arround Clusters</h2>
+    <div class="step hulls">
+      <div class="description">
+      </div>
+
+      <div class="map">
+        {{ aoi_generator.clusters_and_hulls_html() | safe }}
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <h2>4. And the AOI are Ready</h2>
+    <div class="step aoi">
+      <div class="description">
+      </div>
+
+      <div class="map">
+        {{ aoi_generator.hulls_html() | safe }}
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

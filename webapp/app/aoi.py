@@ -1,99 +1,95 @@
-import folium
-import folium.plugins
 import geopandas as gpd
 import psycopg2
 import fiona
 from pyproj import Proj, transform
+from app.html_map import generate_map_html
 
 
-PATH = '/webapp/tmp/aoi.html'
+class AoiHtmlGenerator():
+    def __init__(self, location, tags, dbscan_eps=50, dbscan_minpoints=3):
+        self.location = location
+        self.tags = tags
+        self.dbscan_eps = dbscan_eps
+        self.dbscan_minpoints = dbscan_minpoints
 
+    def polygons_html(self):
+        polygons = self._query_database(self._polygons_query())
+        return generate_map_html(self.location, polygons, init_style=False)
 
-def generate_aoi_html(location, tags):
-    conn = psycopg2.connect(dbname="gis", user="postgres", password="")
+    def clusters_html(self):
+        clusters = self._query_database(self._clusters_query())
+        return generate_map_html(self.location, clusters)
 
-    location_3857 = transform(Proj(init='epsg:4326'), Proj(init='epsg:3857'), location[1], location[0])
-    location_3857 = " ".join([str(coordinate) for coordinate in location_3857])
-    poi_polygons_clustered = gpd.read_postgis(_query(location_3857, tags), conn, geom_col='hull')
-    n_clusters = len(poi_polygons_clustered.groupby('cid').cid.nunique())
-    poi_polygons_clustered.crs = fiona.crs.from_epsg(3857)
+    def clusters_and_hulls_html(self):
+        clusters_and_hulls = self._query_database(self._clusters_and_hulls_query())
+        return generate_map_html(self.location, clusters_and_hulls)
 
-    bbox = gpd.read_postgis(_bbox_query(location_3857), conn, geom_col='bbox')
-    bbox.crs = fiona.crs.from_epsg(3857)
+    def hulls_html(self):
+        hulls = self._query_database(self._hulls_query())
+        return generate_map_html(self.location, hulls)
 
-    m = folium.Map(location=location, zoom_start=16, tiles="cartodbpositron")
+    def _polygons_query(self):
+        return """
+(SELECT way AS geometry FROM planet_osm_polygon
+    WHERE (amenity = ANY(ARRAY{amenity_tags})
+            OR shop = ANY(ARRAY{shop_tags})
+            OR leisure = ANY(ARRAY{leisure_tags})
+            OR landuse = ANY(ARRAY{landuse_tags}))
 
-    folium.plugins.Fullscreen().add_to(m)
-    folium.GeoJson(poi_polygons_clustered, style_function=init_style_function(n_clusters)).add_to(m)
-    folium.GeoJson(bbox)
+           AND access IS DISTINCT FROM 'private'
+           AND st_within(way, {bbox}))
 
-    m.save(PATH)
+UNION ALL
 
-    with open(PATH) as f:
-        return f.read()
+(SELECT polygon.way AS geometry FROM planet_osm_polygon AS polygon
+    INNER JOIN planet_osm_point AS point
+        ON st_within(point.way, polygon.way)
+    WHERE (point.amenity = ANY(ARRAY{amenity_tags})
+            OR point.shop = ANY(ARRAY{shop_tags})
+            OR point.leisure = ANY(ARRAY{leisure_tags})
+            OR point.landuse = ANY(ARRAY{landuse_tags}))
 
+        AND point.access IS DISTINCT FROM 'private'
+        AND st_within(point.way, {bbox})
+        AND polygon.building IS NOT NULL)
+        """.format(bbox=self._bbox_query(), **self.tags)
 
-def _query(location, tags):
-    return """
-WITH polygons AS (
-    (SELECT way AS geometry FROM planet_osm_polygon
-        WHERE (amenity = ANY(ARRAY{amenity_tags})
-                OR shop = ANY(ARRAY{shop_tags})
-                OR leisure = ANY(ARRAY{leisure_tags})
-                OR landuse = ANY(ARRAY{landuse_tags}))
+    def _clusters_query(self):
+        return """
+WITH polygons AS ({polygons_query})
+SELECT polygon.geometry AS geometry,
+       ST_ClusterDBSCAN(polygon.geometry, eps := {eps}, minpoints := {minpoints}) over () AS cid
+FROM polygons AS polygon
+        """.format(polygons_query=self._polygons_query(), eps=self.dbscan_eps, minpoints=self.dbscan_minpoints)
 
-               AND access IS DISTINCT FROM 'private'
-               AND st_within(way, {bbox}))
-
-    UNION ALL
-
-    (SELECT polygon.way AS geometry FROM planet_osm_polygon AS polygon
-        INNER JOIN planet_osm_point AS point
-            ON st_within(point.way, polygon.way)
-        WHERE (point.amenity = ANY(ARRAY{amenity_tags})
-                OR point.shop = ANY(ARRAY{shop_tags})
-                OR point.leisure = ANY(ARRAY{leisure_tags})
-                OR point.landuse = ANY(ARRAY{landuse_tags}))
-
-            AND point.access IS DISTINCT FROM 'private'
-            AND st_within(point.way, {bbox})
-            AND polygon.building IS NOT NULL)
-)
-, clusters AS (
-    SELECT polygon.geometry AS geometry, ST_ClusterDBSCAN(polygon.geometry, eps := 50, minpoints := 3) over () AS cid
-    FROM polygons AS polygon
-)
-
-SELECT cid, ST_ConcaveHull(ST_Union(geometry), 0.99) AS hull
+    def _hulls_query(self):
+        return """
+WITH clusters AS ({clusters_query})
+SELECT cid, ST_ConvexHull(ST_Union(geometry)) AS geometry
 FROM clusters
 WHERE cid IS NOT NULL
 GROUP BY cid
-    """.format(bbox=_bbox_query(location), **tags)
+        """.format(clusters_query=self._clusters_query())
 
+    def _clusters_and_hulls_query(self):
+        return """
+WITH clusters AS ({clusters_query}),
+hulls AS ({hulls_query})
+SELECT cid, geometry FROM clusters
+UNION ALL
+SELECT cid, geometry FROM hulls
+        """.format(clusters_query=self._clusters_query(), hulls_query=self._hulls_query())
 
-def _bbox_query(location):
-    return """
-(SELECT ST_Buffer(ST_GeomFromText('POINT({})', 3857), 1000) AS bbox)
-    """.format(location)
+    def _bbox_query(self):
+        location_3857 = transform(Proj(init='epsg:4326'), Proj(init='epsg:3857'), self.location[1], self.location[0])
+        location_3857 = " ".join([str(coordinate) for coordinate in location_3857])
 
+        return """
+    (SELECT ST_Buffer(ST_GeomFromText('POINT({})', 3857), 1000) AS bbox)
+        """.format(location_3857)
 
-def rgb(minimum, maximum, value):
-    minimum, maximum = float(minimum), float(maximum)
-    ratio = 2 * (value-minimum) / (maximum - minimum)
-    b = int(max(0, 255*(1 - ratio)))
-    r = int(max(0, 255*(ratio - 1)))
-    g = 255 - b - r
-    return r, g, b
-
-
-def style_function(feature, n_colors):
-    cid = feature['properties']['cid']
-    return {
-        'fillOpacity': 0.5,
-        'weight': 0,
-        'fillColor': '#red' if cid is None else "rgb{}".format(rgb(0, n_colors, cid))
-    }
-
-
-def init_style_function(n_colors):
-    return lambda feature: style_function(feature, n_colors)
+    def _query_database(self, query):
+        with psycopg2.connect("") as conn:
+            geometries = gpd.read_postgis(query, conn, geom_col="geometry")
+            geometries.crs = fiona.crs.from_epsg(3857)
+            return geometries

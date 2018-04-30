@@ -1,3 +1,8 @@
 #tags {
   height: 20em !important;
 }
+
+.map {
+  width:80em;
+  height:40em;
+}

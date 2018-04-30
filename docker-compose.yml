@@ -6,6 +6,7 @@ services:
     environment:
       - PGHOST=postgres
       - PGUSER=postgres
+      - PGDATABASE=gis
     volumes:
       - ./webapp:/webapp/
     ports:
