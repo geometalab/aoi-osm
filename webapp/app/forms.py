@@ -10,7 +10,7 @@ from app import settings
 
 class AoiForm(FlaskForm):
     location = SelectField('Location', choices=settings.DEFAULT_LOCATIONS)
-    custom_location = TextField('Custom Location')
+    custom_location = TextField('Custom Location', render_kw={"placeholder": "e.g. 47.3720, 8.5417"})
     tags = StringField('Tags', widget=TextArea(), default=settings.DEFAULT_TAGS)
     dbscan_eps = IntegerField('DBSCAN eps', default=50)
     dbscan_minpoints = IntegerField('DBSCAN minpoints', default=3)
@@ -18,7 +18,11 @@ class AoiForm(FlaskForm):
     submit = SubmitField('Generate AOI')
 
     def location_coordinates(self):
-        return [float(x) for x in self.location.data.split(",")]
+        location_str = self.location.data
+        if len(self.custom_location.data) > 0:
+            location_str = self.custom_location.data
+
+        return [float(x) for x in location_str.split(",")]
 
     def tags_dict(self):
         return json.loads(self.tags.data)
