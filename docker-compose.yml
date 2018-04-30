@@ -3,6 +3,9 @@ services:
   webapp:
     build: ./webapp
     env_file: ./webapp/.env
+    environment:
+      - PGHOST=postgres
+      - PGUSER=postgres
     volumes:
       - ./webapp:/webapp/
     ports:
@@ -29,5 +32,16 @@ services:
       - POSTGRES_PASSWORD=
     volumes:
       - ./postgres_storage/:/var/lib/postgresql/data/
-    ports:
-      - "54320:5432"
+     #ports:
+     #  - "54320:5432"
+
+  import:
+    build: ./import
+    volumes:
+      - ./data/:/data/
+      - ./import/scripts:/scripts/
+    environment:
+      - PGHOST=postgres
+      - PGUSER=postgres
+    depends_on:
+      - postgres

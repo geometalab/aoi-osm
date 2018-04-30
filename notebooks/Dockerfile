@@ -7,6 +7,4 @@ RUN conda install --yes --no-pin \
 
 USER root
 
-RUN sudo apt-get update && sudo apt-get install --yes osm2pgsql
-
 EXPOSE 8888
