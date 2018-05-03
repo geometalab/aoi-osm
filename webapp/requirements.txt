@@ -4,3 +4,5 @@ flask-bootstrap
 folium
 geopandas
 psycopg2-binary
+ipywidgets
+gmaps

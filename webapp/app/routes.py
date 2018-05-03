@@ -17,3 +17,15 @@ def index():
         return render_template('aoi.html', aoi_generator=aoi_generator)
 
     return render_template('index.html', form=form)
+
+
+@app.route('/browse', methods=['GET'])
+def browse():
+    generator = AoiHtmlGenerator()
+    return render_template('browse.html', map_html=generator.already_generated_aois_html())
+
+
+@app.route('/gmaps', methods=['GET'])
+def gmaps():
+    generator = AoiHtmlGenerator()
+    return render_template('browse.html', map_html=generator.aois_on_gmaps_html())

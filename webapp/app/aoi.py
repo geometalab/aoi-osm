@@ -3,10 +3,13 @@ import psycopg2
 import fiona
 from pyproj import Proj, transform
 from app.html_map import generate_map_html
+from ipywidgets.embed import embed_minimal_html
+import gmaps
+import geojson
 
 
 class AoiHtmlGenerator():
-    def __init__(self, location, tags, dbscan_eps=50, dbscan_minpoints=3):
+    def __init__(self, location=None, tags=[], dbscan_eps=50, dbscan_minpoints=3):
         self.location = location
         self.tags = tags
         self.dbscan_eps = dbscan_eps
@@ -27,6 +30,28 @@ class AoiHtmlGenerator():
     def hulls_html(self):
         hulls = self._query_database(self._hulls_query())
         return generate_map_html(self.location, hulls)
+
+    def already_generated_aois_html(self):
+        aois = self._query_database("SELECT hull as geometry, 0 AS cid FROM aois;")
+        return generate_map_html([47.372, 8.541], aois)
+
+    def aois_on_gmaps_html(self):
+        aois = self._query_database("SELECT hull as geometry, 0 AS cid FROM aois;")
+        aois = aois.to_crs({'init': 'epsg:4326'})
+
+        figure_layout = {
+            'width': '100%',
+            'height': '50em',
+        }
+
+        fig = gmaps.figure(center=[47.372, 8.541], zoom_level=16, layout=figure_layout)
+        geojson_layer = gmaps.geojson_layer(geojson.loads(aois.to_json()), fill_opacity=0.01)
+        fig.add_layer(geojson_layer)
+        fig
+
+        embed_minimal_html('/tmp/export.html', views=[fig])
+        with open('/tmp/export.html') as f:
+            return f.read()
 
     def _polygons_query(self):
         return """
