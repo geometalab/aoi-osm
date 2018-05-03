@@ -19,6 +19,9 @@ services:
     environment:
       - PGHOST=postgres
       - PGUSER=postgres
+      - PGDATABASE=gis
+    env_file:
+      - .env
     volumes:
       - ./data/:/data/
       - ./notebooks/notebooks://home/jovyan/
@@ -33,8 +36,8 @@ services:
       - POSTGRES_PASSWORD=
     volumes:
       - ./postgres_storage/:/var/lib/postgresql/data/
-     #ports:
-     #  - "54320:5432"
+    ports:
+      - "54320:5432"
 
   import:
     build: ./import
