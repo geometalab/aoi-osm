@@ -1,4 +1,4 @@
-dropdb gis
+dropdb --if-exists gis
 createdb gis
 psql -d gis -c 'CREATE EXTENSION postgis; CREATE EXTENSION hstore;'
 
