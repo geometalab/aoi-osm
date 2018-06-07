@@ -190,3 +190,4 @@ venv.bak/
 # End of https://www.gitignore.io/api/python,jupyternotebook
 
 webapp/tmp/
+.python_history
