@@ -100,5 +100,6 @@ DEFAULT_TAGS = """
 
 DEFAULT_LOCATIONS = [
     ('47.226, 8.818', 'Rapperswil'),
-    ('47.372, 8.541', 'Zürich')
+    ('47.372, 8.541', 'Zürich'),
+    ('47.2404, 8.7233', 'Stäfa'),
 ]

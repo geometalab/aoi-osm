@@ -31,9 +31,9 @@
 
     <div class="step cluster">
       <div class="description">
-        Cluster polygons by using DBSCAN algorithm with eps = {{
-        aoi_generator.dbscan_eps }} and minpoints = {{
-        aoi_generator.dbscan_minpoints }}
+        Cluster polygons by using DBSCAN algorithm, wheras the parameters
+        minPts and eps are different depending on the location of the of the
+        polygons (local adaption).
       </div>
 
       <div class="map">
@@ -43,9 +43,12 @@
   </div>
 
   <div class="row">
-    <h2>3. Create convex hulls arround clusters</h2>
+    <h2>3. Create {{aoi_generator.hull_algorithm}} hulls arround clusters</h2>
+
     <div class="step hulls">
       <div class="description">
+        Convex or concave hulls are possible and results obviously in different
+        hulls. This can be selected one page before.
       </div>
 
       <div class="map">
@@ -55,13 +58,39 @@
   </div>
 
   <div class="row">
-    <h2>4. And the AOI are ready</h2>
+    <h2>4. Extend using network centrality</h2>
+    <div class="step aoi">
+      <div class="description">
+        Therefore:
+        <ul>
+          <li>calculate closeness centrality of street graph for each hull (inkl buffer)</li>
+          <li>select 10% of the most central streets and ways</li>
+          <li>cut streets which are leaving the hull after 50 meters</li>
+          <li>extend hulls by drawing concave hull arround hull and selected and cut streets</li>
+        </ul>
+
+        Illustrated on the map are:
+        <ul>
+          <li>hulls before (violet)</li>
+          <li>10% most central streets (blue)</li>
+          <li>extension of hulls (red)</li>
+        </ul>
+      </div>
+
+      <div class="map">
+        {{ aoi_generator.network_centrality_html() | safe }}
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <h2>5. And the AOI are ready</h2>
     <div class="step aoi">
       <div class="description">
       </div>
 
       <div class="map">
-        {{ aoi_generator.hulls_html() | safe }}
+        {{ aoi_generator.extended_hulls_html() | safe }}
       </div>
     </div>
   </div>

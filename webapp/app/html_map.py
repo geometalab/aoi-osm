@@ -5,13 +5,15 @@ import folium.plugins
 PATH = '/webapp/tmp/tmp_to_generate.html'
 
 
-def generate_map_html(location, dataframe, init_style=True):
+def generate_map_html(location, dataframe, style='cid'):
     m = folium.Map(location=location, zoom_start=16, tiles="cartodbpositron")
     folium.plugins.Fullscreen().add_to(m)
 
-    if init_style:
+    if style == 'cid':
         dataframe_len = len(dataframe.groupby('cid').cid.nunique())
         folium.GeoJson(dataframe, style_function=init_style_function(dataframe_len)).add_to(m)
+    elif style == 'network':
+        folium.GeoJson(dataframe, style_function=network_style_function).add_to(m)
     else:
         folium.GeoJson(dataframe).add_to(m)
 
@@ -41,3 +43,24 @@ def style_function(feature, n_colors):
 
 def init_style_function(n_colors):
     return lambda feature: style_function(feature, n_colors)
+
+
+def network_style_function(feature):
+    color = feature['properties']['color']
+    weight = 0
+
+    if color == 1:
+        fillColor = "rgb(255, 0, 0)"
+    elif color == 2:
+        fillColor = "rgb(0, 0, 255)"
+    elif color == 3:
+        fillColor = "rgb(255, 255, 0)"
+        weight = 3
+    else:
+        raise
+
+    return {
+            'fillOpacity': 0.5,
+            'weight': weight,
+            'fillColor': fillColor
+            }

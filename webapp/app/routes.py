@@ -11,8 +11,7 @@ def index():
     if form.validate_on_submit():
         aoi_generator = AoiHtmlGenerator(location=form.location_coordinates(),
                                          tags=form.tags_dict(),
-                                         dbscan_eps=form.dbscan_eps_value(),
-                                         dbscan_minpoints=form.dbscan_minpoints_value())
+                                         hull_algorithm=form.hull_algorithm_value())
 
         return render_template('aoi.html', aoi_generator=aoi_generator)
 

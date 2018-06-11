@@ -6,3 +6,7 @@
   width:80em;
   height:40em;
 }
+
+.radio {
+  display: inline-block !important;
+}
