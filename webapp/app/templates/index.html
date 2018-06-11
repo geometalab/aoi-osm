@@ -6,7 +6,12 @@
 
 {% block content %}
 <div class="container">
-  <h1>AOI with OpenStreetMap</h1>
+  <h1>AOIs with OpenStreetMap</h1>
+
+  <p class="introduction">
+  Either <a href="browse">browse all AOIs</a> (<a href="gmaps">overlay on
+    GMaps</a>) or generate them for a specific location.
+  </p>
 
   <form class="form form-horizontal" method="post" role="form">
     {{ form.hidden_tag() }}
@@ -38,8 +43,6 @@
 
     <div class="row">
       {{ wtf.form_field(form.submit) }}
-
-      Or <a href="browse">browse all AOIs</a> / <a href="gmaps">overlay AOIs on GMaps</a>
     </div>
   </form>
 </div>

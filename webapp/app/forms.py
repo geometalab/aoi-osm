@@ -2,7 +2,7 @@ import json
 
 from flask_wtf import FlaskForm
 from wtforms import TextField, SelectField, SubmitField
-from wtforms.fields import StringField, IntegerField, RadioField
+from wtforms.fields import StringField, RadioField
 from wtforms.widgets import TextArea
 
 from app import settings
@@ -14,7 +14,7 @@ class AoiForm(FlaskForm):
     tags = StringField('Tags', widget=TextArea(), default=settings.DEFAULT_TAGS, render_kw={'readonly': True})
     hull_algorithm = RadioField('Hull Algorithm', choices=[('convex', 'Convex'), ('concave', 'Concave(0.99)')], default='convex')
 
-    submit = SubmitField('Generate AOI')
+    submit = SubmitField('Generate AOIs')
 
     def location_coordinates(self):
         location_str = self.location.data

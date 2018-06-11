@@ -13,5 +13,5 @@ INSERT INTO aois (
     FROM pois, clusters
     WHERE ST_Within(geometry, clusters.hull)
   )
-  SELECT ST_ConcaveHull(ST_Union(geometry), 0.9) AS geometry FROM point_clusters_per_cluster WHERE cid IS NOT NULL GROUP BY cluster_id, cid
+  SELECT ST_ConcaveHull(ST_Union(geometry), 0.99) AS geometry FROM point_clusters_per_cluster WHERE cid IS NOT NULL GROUP BY cluster_id, cid
 )
