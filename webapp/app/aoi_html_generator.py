@@ -47,11 +47,11 @@ class AoiHtmlGenerator():
         return generate_map_html(self.location, aois, style=None)
 
     def already_generated_aois_html(self):
-        aois = gpd.read_file("data/aois.geojson")
+        aois = gpd.read_file("static/aois.geojson")
         return generate_map_html([47.372, 8.541], aois, style=None)
 
     def aois_on_gmaps_html(self):
-        aois = gpd.read_file("data/aois.geojson")
+        aois = gpd.read_file("static/aois.geojson")
         aois = aois.to_crs({'init': 'epsg:4326'})
 
         figure_layout = {
