@@ -1,7 +1,7 @@
 from subprocess import check_call
 import argparse
 import psycopg2
-from app.aoi import AoiHtmlGenerator
+from app.aoi_query_generator import AoiQueryGenerator
 
 
 def exec_sql(sql):
@@ -18,9 +18,9 @@ parser.add_argument('--hull_algorithm', choices=['concave', 'convex'], default='
 parser.add_argument('--with_network_centrality', type=bool, default=False)
 args = parser.parse_args()
 
-if args.with_network_centrality:
-    aois_query_generator = AoiHtmlGenerator(hull_algorithm=args.hull_algorithm)
+aois_query_generator = AoiQueryGenerator(hull_algorithm=args.hull_algorithm)
 
+if args.with_network_centrality:
     exec_sql("""
 DROP TABLE IF EXISTS aois_with_network_centrality;
 
@@ -36,8 +36,6 @@ INSERT INTO aois_with_network_centrality ({})
                 "PG:host=postgres dbname=gis user=postgres",
                 "-sql", "select st_transform(hull, 4326) from aois_wit_network_centrality"])
 else:
-    aois_query_generator = AoiHtmlGenerator(hull_algorithm=args.hull_algorithm)
-
     exec_sql("""
 DROP TABLE IF EXISTS aois_without_network_centrality;
 
