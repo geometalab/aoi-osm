@@ -9,6 +9,7 @@ import geojson
 import osmnx as ox
 import networkx as nx
 import operator
+from tqdm import tqdm
 
 
 class AoiHtmlGenerator():
@@ -117,11 +118,14 @@ SELECT 3 as color, geometry FROM intersecting_lines
         aois = aois.to_crs(fiona.crs.from_epsg(4326))
         central_nodes = []
 
-        for aoi in aois.geometry:
-            aoi_graph = ox.graph_from_polygon(aoi.buffer(0.001), network_type='all')
-            closeness_centrality = nx.closeness_centrality(aoi_graph)
-            sorted_nodes = sorted(closeness_centrality.items(), key=operator.itemgetter(1), reverse=True)
-            central_nodes += [node[0] for node in sorted_nodes[:len(sorted_nodes) // 10]]
+        for aoi in tqdm(aois.geometry):
+            try:
+                aoi_graph = ox.graph_from_polygon(aoi.buffer(0.001), network_type='all')
+                closeness_centrality = nx.closeness_centrality(aoi_graph)
+                sorted_nodes = sorted(closeness_centrality.items(), key=operator.itemgetter(1), reverse=True)
+                central_nodes += [node[0] for node in sorted_nodes[:len(sorted_nodes) // 10]]
+            except:
+                print("fetching graph failed for {}".format(aoi))
 
         central_nodes_ids = ', '.join([f'{key}' for key in central_nodes])
 
