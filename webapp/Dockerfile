@@ -9,6 +9,8 @@ WORKDIR /webapp
 
 RUN pip install -r requirements.txt
 
+RUN apt-get update && apt-get install --yes osm2pgsql gdal-bin postgresql-client-9.4
+
 ENV FLASK_APP="webapp.py"
 ENV FLASK_DEBUG=True
 

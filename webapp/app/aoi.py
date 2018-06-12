@@ -12,10 +12,11 @@ import operator
 
 
 class AoiHtmlGenerator():
-    def __init__(self, location=None, tags=[], hull_algorithm='convex'):
+    def __init__(self, location=None, hull_algorithm='convex'):
         self.location = location
-        self.tags = tags
         self.hull_algorithm = hull_algorithm
+
+        ox.utils.config(cache_folder='tmp/cache', use_cache=True)
 
     def polygons_html(self):
         polygons = self._query_database(self._polygons_query())
@@ -60,11 +61,17 @@ class AoiHtmlGenerator():
             return f.read()
 
     def _polygons_query(self):
+        if self.location is None:
+            return "SELECT * FROM pois"
+
         return """
         SELECT * FROM pois WHERE st_intersects(geometry, {bbox})
         """.format(bbox=self._bbox_query())
 
     def _preclusters_subset_query(self):
+        if self.location is None:
+            return "SELECT * FROM preclusters"
+
         return """
         SELECT * FROM preclusters WHERE st_intersects(hull, {bbox})
         """.format(bbox=self._bbox_query())
@@ -80,10 +87,10 @@ class AoiHtmlGenerator():
         """.format(preclusters_subset_query=self._preclusters_subset_query())
 
     def _hulls_query(self):
-        if self.hull_algorithm == 'convex':
-            hull = "ST_ConvexHull(ST_Union(geometry))"
-        else:
+        if self.hull_algorithm == 'concave':
             hull = 'ST_ConcaveHull(ST_Union(geometry), 0.999)'
+        else:
+            hull = "ST_ConvexHull(ST_Union(geometry))"
 
         return """
 WITH clusters AS ({clusters_query})
