@@ -4,95 +4,125 @@
 {% extends "bootstrap/base.html" %}
 
 {% block content %}
+
+{% if explain: %}
+  <div class="container">
+    <div class="row">
+      <h2>
+        1. Get all polygons with tags
+      </h2>
+
+      <div class="step polygons">
+        <div class="description">
+          Select polygons which:
+          <ul>
+            <li>have a given tag</li>
+            <li>contain a node with a given tag (and building = true)</li>
+            <li>have not the attribute access = private</li>
+          </ul>
+        </div>
+
+        <div class="map">
+          {{ aoi_generator.polygons_html() | safe }}
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <h2>2. Cluster polygons with DBSCAN</h2>
+
+      <div class="step cluster">
+        <div class="description">
+          Cluster polygons by using DBSCAN algorithm, wheras the parameters
+          minPts and eps are different depending on the location of the of the
+          polygons (local adaption).
+        </div>
+
+        <div class="map">
+          {{ aoi_generator.clusters_html() | safe }}
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <h2>3. Create {{aoi_generator.hull_algorithm}} hulls arround clusters</h2>
+
+      <div class="step hulls">
+        <div class="description">
+          Convex or concave hulls are possible and results obviously in different
+          hulls. This can be selected one page before.
+        </div>
+
+        <div class="map">
+          {{ aoi_generator.clusters_and_hulls_html() | safe }}
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <h2>4. Extend using network centrality</h2>
+      <div class="step aoi">
+        <div class="description">
+          Therefore:
+          <ul>
+            <li>calculate closeness centrality of street graph for each hull (inkl buffer)</li>
+            <li>select 10% of the most central streets and ways</li>
+            <li>cut streets which are leaving the hull after 50 meters</li>
+            <li>extend hulls by drawing concave hull arround hull and selected and cut streets</li>
+          </ul>
+
+          Illustrated on the map are:
+          <ul>
+            <li>hulls before (violet)</li>
+            <li>10% most central streets (blue)</li>
+            <li>extension of hulls (red)</li>
+          </ul>
+        </div>
+
+        <div class="map">
+          {{ aoi_generator.network_centrality_html() | safe }}
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <h2>5. Exclude waterways and water</h2>
+      <div class="step aoi">
+        <div class="description">
+          If present...
+        </div>
+
+        <div class="map">
+          {{ aoi_generator.without_water_html() | safe }}
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <h2>6. And the AOI are ready</h2>
+      <div class="step aoi">
+        <div class="description">
+        </div>
+
+        <div class="map">
+          {{ aoi_generator.aois_html() | safe }}
+        </div>
+      </div>
+    </div>
+  </div>
+{% else: %}
 <div class="container">
   <div class="row">
-    <h2>
-      1. Get all polygons with tags
-    </h2>
-
-    <div class="step polygons">
-      <div class="description">
-        Select polygons which:
-        <ul>
-          <li>have a given tag</li>
-          <li>contain a node with a given tag (and building = true)</li>
-          <li>have not the attribute access = private</li>
-        </ul>
-      </div>
-
-      <div class="map">
-        {{ aoi_generator.polygons_html() | safe }}
-      </div>
-    </div>
-  </div>
-
-  <div class="row">
-    <h2>2. Cluster polygons with DBSCAN</h2>
-
-    <div class="step cluster">
-      <div class="description">
-        Cluster polygons by using DBSCAN algorithm, wheras the parameters
-        minPts and eps are different depending on the location of the of the
-        polygons (local adaption).
-      </div>
-
-      <div class="map">
-        {{ aoi_generator.clusters_html() | safe }}
-      </div>
-    </div>
-  </div>
-
-  <div class="row">
-    <h2>3. Create {{aoi_generator.hull_algorithm}} hulls arround clusters</h2>
-
-    <div class="step hulls">
-      <div class="description">
-        Convex or concave hulls are possible and results obviously in different
-        hulls. This can be selected one page before.
-      </div>
-
-      <div class="map">
-        {{ aoi_generator.clusters_and_hulls_html() | safe }}
-      </div>
-    </div>
-  </div>
-
-  <div class="row">
-    <h2>4. Extend using network centrality</h2>
-    <div class="step aoi">
-      <div class="description">
-        Therefore:
-        <ul>
-          <li>calculate closeness centrality of street graph for each hull (inkl buffer)</li>
-          <li>select 10% of the most central streets and ways</li>
-          <li>cut streets which are leaving the hull after 50 meters</li>
-          <li>extend hulls by drawing concave hull arround hull and selected and cut streets</li>
-        </ul>
-
-        Illustrated on the map are:
-        <ul>
-          <li>hulls before (violet)</li>
-          <li>10% most central streets (blue)</li>
-          <li>extension of hulls (red)</li>
-        </ul>
-      </div>
-
-      <div class="map">
-        {{ aoi_generator.network_centrality_html() | safe }}
-      </div>
-    </div>
-  </div>
-
-  <div class="row">
-    <h2>5. And the AOI are ready</h2>
+    <h2>Generated AOIs</h2>
     <div class="step aoi">
       <div class="description">
       </div>
 
       <div class="map">
-        {{ aoi_generator.extended_hulls_html() | safe }}
+        {{ aoi_generator.aois_html() | safe }}
       </div>
     </div>
   </div>
 </div>
+{% endif %}
 {% endblock %}

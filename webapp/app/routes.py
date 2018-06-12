@@ -1,7 +1,7 @@
 from flask import render_template
 from app import app
 from app.forms import AoiForm
-from app.aoi import AoiHtmlGenerator
+from app.aoi_html_generator import AoiHtmlGenerator
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -12,7 +12,7 @@ def index():
         aoi_generator = AoiHtmlGenerator(location=form.location_coordinates(),
                                          hull_algorithm=form.hull_algorithm_value())
 
-        return render_template('aoi.html', aoi_generator=aoi_generator)
+        return render_template('aoi.html', aoi_generator=aoi_generator, explain=form.explain_value())
 
     return render_template('index.html', form=form)
 

@@ -12,7 +12,7 @@ import operator
 from tqdm import tqdm
 
 
-class AoiHtmlGenerator():
+class AoiQueryGenerator():
     def __init__(self, location=None, hull_algorithm='convex'):
         self.location = location
         self.hull_algorithm = hull_algorithm
@@ -33,7 +33,7 @@ class AoiHtmlGenerator():
 
         return """
         SELECT * FROM pois WHERE st_intersects(geometry, {bbox})
-        """.format(bbox=self._bbox_query())
+        """.format(bbox=self.bbox_query())
 
     def preclusters_subset_query(self):
         if self.location is None:
@@ -41,7 +41,7 @@ class AoiHtmlGenerator():
 
         return """
         SELECT * FROM preclusters WHERE st_intersects(hull, {bbox})
-        """.format(bbox=self._bbox_query())
+        """.format(bbox=self.bbox_query())
 
     def clusters_query(self):
         return """
@@ -51,7 +51,7 @@ class AoiHtmlGenerator():
                ST_ClusterDBSCAN(geometry, eps := 35, minpoints := preclusters_subset.dbscan_minpts) over () AS cid
         FROM pois, preclusters_subset
         WHERE ST_Within(geometry, preclusters_subset.hull)
-        """.format(preclusters_subset_query=self._preclusters_subset_query())
+        """.format(preclusters_subset_query=self.preclusters_subset_query())
 
     def hulls_query(self):
         if self.hull_algorithm == 'concave':
@@ -60,15 +60,24 @@ class AoiHtmlGenerator():
             hull = "ST_ConvexHull(ST_Union(geometry))"
 
         return """
-WITH clusters AS ({clusters_query})
-SELECT cid, {hull} AS geometry
-FROM clusters
-WHERE cid IS NOT NULL
-GROUP BY cid
-        """.format(clusters_query=self._clusters_query(), hull=hull)
+        WITH clusters AS ({clusters_query})
+        SELECT cid, {hull} AS geometry
+        FROM clusters
+        WHERE cid IS NOT NULL
+        GROUP BY cid
+        """.format(clusters_query=self.clusters_query(), hull=hull)
+
+    def clusters_and_hulls_query(self):
+        return """
+        WITH clusters AS ({clusters_query}),
+        hulls AS ({hulls_query})
+        SELECT cid, geometry FROM clusters
+        UNION ALL
+        SELECT cid, geometry FROM hulls
+            """.format(clusters_query=self.clusters_query(), hulls_query=self.hulls_query())
 
     def network_centrality_query(self):
-        return self._extended_hulls_query() + """
+        return self.extended_hulls_query() + """
 
 UNION
 
@@ -80,7 +89,7 @@ SELECT 3 as color, geometry FROM intersecting_lines
 """
 
     def extended_hulls_query(self):
-        aois = self._query_database(self._hulls_query())
+        aois = self.query_database(self.hulls_query())
         aois = aois.to_crs(fiona.crs.from_epsg(4326))
         central_nodes = []
 
@@ -90,6 +99,9 @@ SELECT 3 as color, geometry FROM intersecting_lines
                 closeness_centrality = nx.closeness_centrality(aoi_graph)
                 sorted_nodes = sorted(closeness_centrality.items(), key=operator.itemgetter(1), reverse=True)
                 central_nodes += [node[0] for node in sorted_nodes[:len(sorted_nodes) // 10]]
+            except KeyboardInterrupt:
+                # leave on ctrl-c
+                sys.exit(0)
             except:
                 print("fetching graph failed for {}".format(aoi))
 
@@ -112,7 +124,23 @@ SELECT 1 AS color, ST_ConcaveHull(ST_Union(geometry), 0.99) AS geometry FROM (
   SELECT cid, geometry FROM intersecting_lines
 ) AS tmp
 GROUP BY cid
-""".format(hulls_query=self._hulls_query(), central_nodes_ids=central_nodes_ids)
+""".format(hulls_query=self.hulls_query(), central_nodes_ids=central_nodes_ids)
+
+    def without_water_query(self, hulls_query):
+        return """WITH hulls AS ({hulls_query})
+SELECT ST_Difference(hulls.geometry, coalesce((
+    SELECT ST_Union(way) AS geometry FROM planet_osm_polygon
+    WHERE (water IS NOT NULL OR waterway IS NOT NULL)
+          AND (tunnel IS NULL OR tunnel = 'no')
+    AND st_intersects(way, hulls.geometry)
+), 'GEOMETRYCOLLECTION EMPTY'::geometry)) AS geometry
+FROM hulls""".format(hulls_query=hulls_query)
+
+    def cascade_aois_query(self, aois_query):
+        return """
+WITH aois AS ({aois_query})
+SELECT (ST_Dump(ST_Union(geometry))).geom AS geometry FROM aois
+""".format(aois_query=aois_query)
 
     def query_database(self, query):
         with psycopg2.connect("") as conn:

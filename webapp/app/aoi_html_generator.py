@@ -14,31 +14,44 @@ class AoiHtmlGenerator():
         self.location = location
 
     def polygons_html(self):
-        polygons = self._query_database(self._polygons_query())
+        polygons = self.query_database(self.query_generator.polygons_query())
         return generate_map_html(self.location, polygons, style=None)
 
     def clusters_html(self):
-        clusters = self._query_database(self._clusters_query())
+        clusters = self.query_database(self.query_generator.clusters_query())
         return generate_map_html(self.location, clusters)
 
     def clusters_and_hulls_html(self):
-        clusters_and_hulls = self._query_database(self._clusters_and_hulls_query())
+        clusters_and_hulls = self.query_database(self.query_generator.clusters_and_hulls_query())
         return generate_map_html(self.location, clusters_and_hulls)
 
-    def extended_hulls_html(self):
-        hulls = self._query_database(self._extended_hulls_query())
-        return generate_map_html(self.location, hulls, style=None)
-
     def network_centrality_html(self):
-        network_centrality = self._query_database(self._network_centrality_query())
+        network_centrality = self.query_database(self.query_generator.network_centrality_query())
         return generate_map_html(self.location, network_centrality, style='network')
 
+    def extended_hulls_html(self):
+        hulls = self.query_database(self.query_generator.extended_hulls_query())
+        return generate_map_html(self.location, hulls, style=None)
+
+    def without_water_html(self):
+        query = self.query_generator.without_water_query(self.query_generator.extended_hulls_query())
+        hulls = self.query_database(query)
+        return generate_map_html(self.location, hulls, style=None)
+
+    def aois_html(self):
+        aois_query = self.query_generator.extended_hulls_query()
+        aois_query = self.query_generator.without_water_query(aois_query)
+        aois_query = self.query_generator.cascade_aois_query(aois_query)
+
+        aois = self.query_database(aois_query)
+        return generate_map_html(self.location, aois, style=None)
+
     def already_generated_aois_html(self):
-        aois = self._query_database("SELECT hull as geometry, 0 AS cid FROM aois;")
-        return generate_map_html([47.372, 8.541], aois)
+        aois = gpd.read_file("data/aois.geojson")
+        return generate_map_html([47.372, 8.541], aois, style=None)
 
     def aois_on_gmaps_html(self):
-        aois = self._query_database("SELECT hull as geometry, 0 AS cid FROM aois;")
+        aois = gpd.read_file("data/aois.geojson")
         aois = aois.to_crs({'init': 'epsg:4326'})
 
         figure_layout = {
