@@ -5,8 +5,8 @@
 
 {% block content %}
 
-{% if explain: %}
-  <div class="container">
+<div class="container">
+  {% if explain: %}
     <div class="row">
       <h2>
         1. Get all polygons with tags
@@ -99,7 +99,25 @@
     </div>
 
     <div class="row">
-      <h2>6. And the AOI are ready</h2>
+      <h2>6. Sanatize</h2>
+      <div class="step aoi">
+        <div class="description">
+          <ul>
+            <li>union overlapping polygons</li>
+            <li>simplify polygons slightly</li>
+            <li>remove invalid polygons</li>
+          </ul>
+        </div>
+
+        <div class="map">
+          {{ aoi_generator.aois_html() | safe }}
+        </div>
+      </div>
+    </div>
+
+  {% endif %}
+    <div class="row">
+      <h2>OpenStreetMap AOI</h2>
       <div class="step aoi">
         <div class="description">
         </div>
@@ -109,20 +127,9 @@
         </div>
       </div>
     </div>
-  </div>
-{% else: %}
-<div class="container">
-  <div class="row">
-    <h2>Generated AOIs</h2>
-    <div class="step aoi">
-      <div class="description">
-      </div>
 
-      <div class="map">
-        {{ aoi_generator.aois_html() | safe }}
-      </div>
+    <div class="row">
+      <a class="btn btn-default back" href="{{ url_for('index') }}">Generate other AOI</a>
     </div>
   </div>
-</div>
-{% endif %}
 {% endblock %}

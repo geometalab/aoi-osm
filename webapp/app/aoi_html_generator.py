@@ -13,6 +13,10 @@ class AoiHtmlGenerator():
         self.query_generator = AoiQueryGenerator(location, hull_algorithm)
         self.location = location
 
+    def any_aoi(self):
+        clusters = self.query_database(self.query_generator.clusters_query())
+        return clusters.size > 0
+
     def polygons_html(self):
         polygons = self.query_database(self.query_generator.polygons_query())
         return generate_map_html(self.location, polygons, style=None)
@@ -41,7 +45,7 @@ class AoiHtmlGenerator():
     def aois_html(self):
         aois_query = self.query_generator.extended_hulls_query()
         aois_query = self.query_generator.without_water_query(aois_query)
-        aois_query = self.query_generator.cascade_aois_query(aois_query)
+        aois_query = self.query_generator.sanatize_aois_query(aois_query)
 
         aois = self.query_database(aois_query)
         return generate_map_html(self.location, aois, style=None)

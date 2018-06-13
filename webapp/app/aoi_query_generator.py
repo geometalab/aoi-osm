@@ -136,10 +136,12 @@ SELECT ST_Difference(hulls.geometry, coalesce((
 ), 'GEOMETRYCOLLECTION EMPTY'::geometry)) AS geometry
 FROM hulls""".format(hulls_query=hulls_query)
 
-    def cascade_aois_query(self, aois_query):
+    def sanatize_aois_query(self, aois_query):
         return """
 WITH aois AS ({aois_query})
-SELECT (ST_Dump(ST_Union(geometry))).geom AS geometry FROM aois
+SELECT ST_Simplify((ST_Dump(ST_Union(geometry))).geom, 5) AS geometry
+FROM aois
+WHERE ST_IsValid(geometry)
 """.format(aois_query=aois_query)
 
     def query_database(self, query):

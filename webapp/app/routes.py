@@ -12,7 +12,10 @@ def index():
         aoi_generator = AoiHtmlGenerator(location=form.location_coordinates(),
                                          hull_algorithm=form.hull_algorithm_value())
 
-        return render_template('aoi.html', aoi_generator=aoi_generator, explain=form.explain_value())
+        if aoi_generator.any_aoi():
+            return render_template('aoi.html', aoi_generator=aoi_generator, explain=form.explain_value())
+        else:
+            return render_template('no_aoi.html')
 
     return render_template('index.html', form=form)
 

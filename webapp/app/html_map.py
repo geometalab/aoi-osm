@@ -6,7 +6,9 @@ PATH = '/webapp/tmp/tmp_to_generate.html'
 
 
 def generate_map_html(location, dataframe, style='cid'):
-    m = folium.Map(location=location, zoom_start=16, tiles="cartodbpositron")
+    attr = '(c) <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors (c) <a href="http://cartodb.com/attributions">CartoDB</a>, CartoDB <a href ="http://cartodb.com/attributions">attributions</a>'
+
+    m = folium.Map(location=location, zoom_start=16, tiles="cartodbpositron", attr=attr)
     folium.plugins.Fullscreen().add_to(m)
 
     if style == 'cid':

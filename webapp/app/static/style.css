@@ -11,11 +11,19 @@
   display: inline-block !important;
 }
 
+.container {
+  padding-top: 1em;
+}
+
 .introduction {
   font-size: 1.5em;
   padding-bottom: 1em;
 }
 
 div.submit {
+  margin-top: 1em;
+}
+
+a.back {
   margin-top: 1em;
 }

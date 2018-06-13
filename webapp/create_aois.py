@@ -23,7 +23,7 @@ aois_query_generator = AoiQueryGenerator(hull_algorithm=args.hull_algorithm)
 if args.with_network_centrality:
     aois_query = aois_query_generator.extended_hulls_query()
     aois_query = aois_query_generator.without_water_query(aois_query)
-    aois_query = aois_query_generator.cascade_aois_query(aois_query)
+    aois_query = aois_query_generator.sanatize_aois_query(aois_query)
 
     exec_sql("""
 DROP TABLE IF EXISTS aois_with_network_centrality;
@@ -42,7 +42,7 @@ INSERT INTO aois_with_network_centrality ({})
 else:
     aois_query = aois_query_generator.hulls_query()
     aois_query = aois_query_generator.without_water_query(aois_query)
-    aois_query = aois_query_generator.cascade_aois_query(aois_query)
+    aois_query = aois_query_generator.sanatize_aois_query(aois_query)
 
     exec_sql("""
 DROP TABLE IF EXISTS aois_without_network_centrality;
