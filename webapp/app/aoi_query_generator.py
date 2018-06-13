@@ -7,6 +7,7 @@ import osmnx as ox
 import networkx as nx
 import operator
 import time
+import fiona
 from tqdm import tqdm
 from app.database import query_geometries
 
