@@ -1,6 +1,3 @@
-import geopandas as gpd
-import psycopg2
-import fiona
 from pyproj import Proj, transform
 from app.html_map import generate_map_html
 from ipywidgets.embed import embed_minimal_html
@@ -9,7 +6,9 @@ import geojson
 import osmnx as ox
 import networkx as nx
 import operator
+import time
 from tqdm import tqdm
+from app.database import query_geometries
 
 
 class AoiQueryGenerator():
@@ -89,10 +88,11 @@ SELECT 3 as color, geometry FROM intersecting_lines
 """
 
     def extended_hulls_query(self):
-        aois = self.query_database(self.hulls_query())
+        aois = self.query_geometries(self.hulls_query())
         aois = aois.to_crs(fiona.crs.from_epsg(4326))
         central_nodes = []
 
+        start = time.time()
         for aoi in tqdm(aois.geometry):
             try:
                 aoi_graph = ox.graph_from_polygon(aoi.buffer(0.001), network_type='all')
@@ -106,6 +106,7 @@ SELECT 3 as color, geometry FROM intersecting_lines
                 print("fetching graph failed for {}".format(aoi))
 
         central_nodes_ids = ', '.join([f'{key}' for key in central_nodes])
+        print("calculating most central nodes for aois took {}s".format(time.time() - start))
 
         return """
 WITH hulls AS ({hulls_query}),
@@ -143,9 +144,3 @@ SELECT ST_Simplify((ST_Dump(ST_Union(geometry))).geom, 5) AS geometry
 FROM aois
 WHERE ST_IsValid(geometry)
 """.format(aois_query=aois_query)
-
-    def query_database(self, query):
-        with psycopg2.connect("") as conn:
-            geometries = gpd.read_postgis(query, conn, geom_col="geometry")
-            geometries.crs = fiona.crs.from_epsg(3857)
-            return geometries

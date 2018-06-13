@@ -1,6 +1,7 @@
 from subprocess import check_call
 import argparse
 import psycopg2
+import cProfile
 from app.aoi_query_generator import AoiQueryGenerator
 
 
@@ -11,12 +12,14 @@ def exec_sql(sql):
         with connection.cursor() as cursor:
             cursor.execute(sql)
 
-
 parser = argparse.ArgumentParser()
 parser.add_argument('--output_geojson', required=True)
 parser.add_argument('--hull_algorithm', choices=['concave', 'convex'], default='convex')
 parser.add_argument('--with_network_centrality', action='store_true', default=False)
 args = parser.parse_args()
+
+profiler = cProfile.Profile()
+profiler.enable()
 
 aois_query_generator = AoiQueryGenerator(hull_algorithm=args.hull_algorithm)
 
@@ -58,3 +61,6 @@ INSERT INTO aois_without_network_centrality ({})
                 args.output_geojson,
                 "PG:host=postgres dbname=gis user=postgres",
                 "-sql", "select st_transform(hull, 4326) from aois_without_network_centrality"])
+
+
+profiler.dump_stats("tmp/benchmarks.cprofile")

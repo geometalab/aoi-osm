@@ -10,5 +10,11 @@ Approach:
 2) Evaluate applicability of implementation and identify bottlenecks
 3) Evaluate suitable BigData technology stack
 4) Generate AOI with evaluated BigData framework
-5) Cut-off "non-walkable" areas like streets and lake 
+5) Cut-off "non-walkable" areas like streets and lake
 6) ...
+
+
+## Init Database
+
+## Export AOIs
+
