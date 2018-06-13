@@ -1,7 +1,7 @@
 from subprocess import check_call
 import argparse
 import psycopg2
-import cProfile
+import time
 from app.aoi_query_generator import AoiQueryGenerator
 
 
@@ -18,9 +18,7 @@ parser.add_argument('--hull_algorithm', choices=['concave', 'convex'], default='
 parser.add_argument('--with_network_centrality', action='store_true', default=False)
 args = parser.parse_args()
 
-profiler = cProfile.Profile()
-profiler.enable()
-
+start = time.time()
 aois_query_generator = AoiQueryGenerator(hull_algorithm=args.hull_algorithm)
 
 if args.with_network_centrality:
@@ -63,4 +61,4 @@ INSERT INTO aois_without_network_centrality ({})
                 "-sql", "select st_transform(hull, 4326) from aois_without_network_centrality"])
 
 
-profiler.dump_stats("tmp/benchmarks.cprofile")
+print("creating aois took {}s".format(time.time() - start))
