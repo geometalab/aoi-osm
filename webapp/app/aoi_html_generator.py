@@ -13,32 +13,32 @@ class AoiHtmlGenerator():
         self.location = location
 
     def any_aoi(self):
-        clusters = self.query_geometries(self.query_generator.clusters_query())
+        clusters = query_geometries(self.query_generator.clusters_query())
         return clusters.size > 0
 
     def polygons_html(self):
-        polygons = self.query_geometries(self.query_generator.polygons_query())
+        polygons = query_geometries(self.query_generator.polygons_query())
         return generate_map_html(self.location, polygons, style=None)
 
     def clusters_html(self):
-        clusters = self.query_geometries(self.query_generator.clusters_query())
+        clusters = query_geometries(self.query_generator.clusters_query())
         return generate_map_html(self.location, clusters)
 
     def clusters_and_hulls_html(self):
-        clusters_and_hulls = self.query_geometries(self.query_generator.clusters_and_hulls_query())
+        clusters_and_hulls = query_geometries(self.query_generator.clusters_and_hulls_query())
         return generate_map_html(self.location, clusters_and_hulls)
 
     def network_centrality_html(self):
-        network_centrality = self.query_geometries(self.query_generator.network_centrality_query())
+        network_centrality = query_geometries(self.query_generator.network_centrality_query())
         return generate_map_html(self.location, network_centrality, style='network')
 
     def extended_hulls_html(self):
-        hulls = self.query_geometries(self.query_generator.extended_hulls_query())
+        hulls = query_geometries(self.query_generator.extended_hulls_query())
         return generate_map_html(self.location, hulls, style=None)
 
     def without_water_html(self):
         query = self.query_generator.without_water_query(self.query_generator.extended_hulls_query())
-        hulls = self.query_geometries(query)
+        hulls = query_geometries(query)
         return generate_map_html(self.location, hulls, style=None)
 
     def aois_html(self):
@@ -46,7 +46,7 @@ class AoiHtmlGenerator():
         aois_query = self.query_generator.without_water_query(aois_query)
         aois_query = self.query_generator.sanatize_aois_query(aois_query)
 
-        aois = self.query_geometries(aois_query)
+        aois = query_geometries(aois_query)
         return generate_map_html(self.location, aois, style=None)
 
     def already_generated_aois_html(self):
