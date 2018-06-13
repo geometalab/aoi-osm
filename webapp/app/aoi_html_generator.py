@@ -51,6 +51,7 @@ class AoiHtmlGenerator():
 
     def already_generated_aois_html(self):
         aois = gpd.read_file("static/aois.geojson")
+        aois = aois[aois.geometry.notnull()]
         return generate_map_html([47.372, 8.541], aois, style=None)
 
     def aois_on_gmaps_html(self):

@@ -142,5 +142,5 @@ FROM hulls""".format(hulls_query=hulls_query)
 WITH aois AS ({aois_query})
 SELECT ST_Simplify((ST_Dump(ST_Union(geometry))).geom, 5) AS geometry
 FROM aois
-WHERE ST_IsValid(geometry)
+WHERE ST_IsValid(geometry) AND NOT ST_IsEmpty(geometry)
 """.format(aois_query=aois_query)
