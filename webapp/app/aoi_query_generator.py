@@ -88,7 +88,7 @@ SELECT 3 as color, geometry FROM intersecting_lines
 """
 
     def extended_hulls_query(self):
-        aois = self.query_geometries(self.hulls_query())
+        aois = query_geometries(self.hulls_query())
         aois = aois.to_crs(fiona.crs.from_epsg(4326))
         central_nodes = []
 
