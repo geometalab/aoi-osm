@@ -140,8 +140,9 @@ FROM hulls""".format(hulls_query=hulls_query)
 
     def sanatize_aois_query(self, aois_query):
         return """
-WITH aois AS ({aois_query})
-SELECT ST_Simplify((ST_Dump(ST_Union(geometry))).geom, 5) AS geometry
-FROM aois
-WHERE ST_IsValid(geometry) AND NOT ST_IsEmpty(geometry)
+WITH aois AS ({aois_query}),
+sanatized_aois AS(
+    SELECT ST_Simplify((ST_Dump(ST_Union(geometry))).geom, 5) AS geometry FROM aois
+)
+SELECT * FROM sanatized_aois WHERE ST_IsValid(geometry) AND NOT ST_IsEmpty(geometry)
 """.format(aois_query=aois_query)
