@@ -11,7 +11,7 @@ INSERT INTO preclusters(hull, area, pois_count) (
   WITH clustered_pois AS (
     SELECT geometry, ST_ClusterDBSCAN(geometry, 100, 3) over () as cid FROM pois
   )
-  SELECT ST_ConcaveHull(ST_Union(geometry), 0.9),
+  SELECT ST_ConvexHull(ST_Union(geometry)),
          ST_Area(ST_ConvexHull(ST_Union(geometry))),
          COUNT(geometry)
   FROM clustered_pois AS hull WHERE cid > 0 GROUP BY cid
