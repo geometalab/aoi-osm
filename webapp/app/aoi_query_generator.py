@@ -10,6 +10,7 @@ import time
 import fiona
 from tqdm import tqdm
 from app.database import query_geometries
+import logging
 
 
 class AoiQueryGenerator():
@@ -104,10 +105,10 @@ SELECT 3 as color, geometry FROM intersecting_lines
                 # leave on ctrl-c
                 sys.exit(0)
             except:
-                print("fetching graph failed for {}".format(aoi))
+                logging.debug("fetching graph failed for {}".format(aoi))
 
         central_nodes_ids = ', '.join([f'{key}' for key in central_nodes])
-        print("calculating most central nodes for aois took {}s".format(time.time() - start))
+        logging.debug("calculating most central nodes for aois took {}s".format(time.time() - start))
 
         return """
 WITH hulls AS ({hulls_query}),
