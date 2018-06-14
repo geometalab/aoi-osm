@@ -36,6 +36,7 @@ services:
     environment:
       - POSTGRES_PASSWORD=
     volumes:
-      - ./postgres_storage/:/var/lib/postgresql/data/
+      - ./postgres/storage/:/var/lib/postgresql/data/
+      - ./data/alter_config.sh:/docker-entrypoint-initdb.d/alter_postgres_config.sh
     ports:
       - "54320:5432"
