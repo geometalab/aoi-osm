@@ -26,6 +26,10 @@ docker-compose run --rm webapp bash import_osm.sh
 This will import the file data/switzerland.osm.pbf to the database. To change
 the file, edit the import script `webapp/import_osm.sh`.
 
+Since not all OSM elements are necessary for generating AOIs, one can filter
+the `osm.pbf` file before importing it. Therefore, osmfilter can be used. An
+example is provided in the file `pbf_filter_example.sh`.
+
 Prepare the POIs:
 ```
 docker-compose run --rm webapp bash setup_pois.sh
