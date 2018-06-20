@@ -32,7 +32,8 @@ libraryDependencies ++= Seq(
   "org.datasyslab" % "geospark" % GeoSparkVersion,
   "org.datasyslab" % "geospark-sql_".concat(SparkCompatibleVersion) % GeoSparkVersion,
   "org.postgresql" % "postgresql" % "42.1.1" % dependencyScope,
-  "org.alitouka" % "spark_dbscan_2.10" % "0.0.5"
+  "org.alitouka" % "spark_dbscan_2.10" % "0.0.5",
+  "org.apache.commons" % "commons-math3" % "3.6.1"
 )
 
 assemblyMergeStrategy in assembly := {
