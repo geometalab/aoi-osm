@@ -14,7 +14,7 @@ WORKDIR /webapp
 RUN pip install -r requirements.txt
 
 ENV FLASK_APP="webapp.py"
-ENV FLASK_DEBUG=True
+ENV FLASK_DEBUG=False
 
 EXPOSE 5000
 

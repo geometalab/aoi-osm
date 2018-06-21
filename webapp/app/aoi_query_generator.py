@@ -25,7 +25,7 @@ class AoiQueryGenerator():
         location_3857 = " ".join([str(coordinate) for coordinate in location_3857])
 
         return """
-    (SELECT ST_Buffer(ST_GeomFromText('POINT({})', 3857), 1000) AS bbox)
+        (SELECT ST_Buffer(ST_GeomFromText('POINT({})', 3857), 1000) AS bbox)
         """.format(location_3857)
 
     def polygons_query(self):
@@ -79,15 +79,14 @@ class AoiQueryGenerator():
 
     def network_centrality_query(self):
         return self.extended_hulls_query() + """
+        UNION
 
-UNION
+        SELECT 2 as color, geometry FROM hulls
 
-SELECT 2 as color, geometry FROM hulls
+        UNION
 
-UNION
-
-SELECT 3 as color, geometry FROM intersecting_lines
-"""
+        SELECT 3 as color, geometry FROM intersecting_lines
+        """
 
     def extended_hulls_query(self):
         aois = query_geometries(self.hulls_query())
@@ -111,39 +110,39 @@ SELECT 3 as color, geometry FROM intersecting_lines
         logging.debug("calculating most central nodes for aois took {}s".format(time.time() - start))
 
         return """
-WITH hulls AS ({hulls_query}),
-intersecting_lines AS (
-    SELECT hulls.cid, ST_Intersection(way, ST_Buffer(hulls.geometry, 50)) AS geometry FROM planet_osm_line, hulls
-    WHERE osm_id = ANY(
-      SELECT id FROM planet_osm_ways
-      WHERE nodes && ARRAY[{central_nodes_ids}]::bigint[]
-    )
-    AND ST_DWithin(planet_osm_line.way, hulls.geometry, 50)
-)
+        WITH hulls AS ({hulls_query}),
+        intersecting_lines AS (
+            SELECT hulls.cid, ST_Intersection(way, ST_Buffer(hulls.geometry, 50)) AS geometry FROM planet_osm_line, hulls
+            WHERE osm_id = ANY(
+              SELECT id FROM planet_osm_ways
+              WHERE nodes && ARRAY[{central_nodes_ids}]::bigint[]
+            )
+            AND ST_DWithin(planet_osm_line.way, hulls.geometry, 50)
+        )
 
-SELECT 1 AS color, ST_ConcaveHull(ST_Union(geometry), 0.99) AS geometry FROM (
-  SELECT cid, geometry FROM hulls
-  UNION
-  SELECT cid, geometry FROM intersecting_lines
-) AS tmp
-GROUP BY cid
-""".format(hulls_query=self.hulls_query(), central_nodes_ids=central_nodes_ids)
+        SELECT 1 AS color, ST_ConcaveHull(ST_Union(geometry), 0.99) AS geometry FROM (
+          SELECT cid, geometry FROM hulls
+          UNION
+          SELECT cid, geometry FROM intersecting_lines
+        ) AS tmp
+        GROUP BY cid
+        """.format(hulls_query=self.hulls_query(), central_nodes_ids=central_nodes_ids)
 
     def without_water_query(self, hulls_query):
         return """WITH hulls AS ({hulls_query})
-SELECT ST_Difference(hulls.geometry, coalesce((
-    SELECT ST_Union(way) AS geometry FROM planet_osm_polygon
-    WHERE (water IS NOT NULL OR waterway IS NOT NULL)
-          AND (tunnel IS NULL OR tunnel = 'no')
-    AND st_intersects(way, hulls.geometry)
-), 'GEOMETRYCOLLECTION EMPTY'::geometry)) AS geometry
-FROM hulls""".format(hulls_query=hulls_query)
+        SELECT ST_Difference(hulls.geometry, coalesce((
+            SELECT ST_Union(way) AS geometry FROM planet_osm_polygon
+            WHERE (water IS NOT NULL OR waterway IS NOT NULL)
+                  AND (tunnel IS NULL OR tunnel = 'no')
+            AND st_intersects(way, hulls.geometry)
+        ), 'GEOMETRYCOLLECTION EMPTY'::geometry)) AS geometry
+        FROM hulls""".format(hulls_query=hulls_query)
 
     def sanatize_aois_query(self, aois_query):
         return """
-WITH aois AS ({aois_query}),
-sanatized_aois AS(
-    SELECT ST_Simplify((ST_Dump(ST_Union(geometry))).geom, 5) AS geometry FROM aois
-)
-SELECT * FROM sanatized_aois WHERE ST_IsValid(geometry) AND NOT ST_IsEmpty(geometry)
-""".format(aois_query=aois_query)
+        WITH aois AS ({aois_query}),
+        sanatized_aois AS(
+            SELECT ST_Simplify((ST_Dump(ST_Union(geometry))).geom, 5) AS geometry FROM aois
+        )
+        SELECT * FROM sanatized_aois WHERE ST_IsValid(geometry) AND NOT ST_IsEmpty(geometry)
+        """.format(aois_query=aois_query)
