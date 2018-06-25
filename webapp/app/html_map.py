@@ -16,6 +16,8 @@ def generate_map_html(location, dataframe, style='cid'):
         folium.GeoJson(dataframe, style_function=init_style_function(dataframe_len)).add_to(m)
     elif style == 'network':
         folium.GeoJson(dataframe, style_function=network_style_function).add_to(m)
+    elif style == 'final':
+        folium.GeoJson(dataframe, style_function=final_style_function).add_to(m)
     else:
         folium.GeoJson(dataframe).add_to(m)
 
@@ -45,6 +47,14 @@ def style_function(feature, n_colors):
 
 def init_style_function(n_colors):
     return lambda feature: style_function(feature, n_colors)
+
+
+def final_style_function(feature):
+    return {
+        'fillOpacity': 0.5,
+        'weight': 0,
+        'fillColor': '#f9c386'
+    }
 
 
 def network_style_function(feature):

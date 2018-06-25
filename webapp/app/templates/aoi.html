@@ -103,14 +103,14 @@
       <div class="step aoi">
         <div class="description">
           <ul>
-            <li>union overlapping polygons</li>
-            <li>simplify polygons slightly</li>
-            <li>remove invalid polygons</li>
+            <li>union overlapping polygons (ST_Union)</li>
+            <li>simplify polygons slightly (ST_Simplify(5))</li>
+            <li>remove invalid polygons (ST_IsValid AND NOT ST_IsEmpty)</li>
           </ul>
         </div>
 
         <div class="map">
-          {{ aoi_generator.aois_html() | safe }}
+          {{ aoi_generator.sanitize_aois_html() | safe }}
         </div>
       </div>
     </div>

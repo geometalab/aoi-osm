@@ -134,10 +134,10 @@ object Clustering extends App {
     val aoisDataFrame = sparkSession.sql("SELECT ST_ConvexHull(ST_Envelope_Aggr(geometry)) AS aoi FROM clustered_pois GROUP BY cluster_id")
 
     println("final aois count: " + aoisDataFrame .count())
-    val spatialEventsRDD = new SpatialRDD[Geometry]
-    spatialEventsRDD.rawSpatialRDD = Adapter.toRdd(aoisDataFrame)
+    val spatialAoisRDD = new SpatialRDD[Geometry]
+    spatialAoisRDD.rawSpatialRDD = Adapter.toRdd(aoisDataFrame)
     "rm -R out/aois.export" !;
-    spatialEventsRDD.saveAsGeoJSON("out/aois.export")
+    spatialAoisRDD.saveAsGeoJSON("out/aois.export")
 
     "cat out/aois.export/* | sed '$!s/$/,/' > out/aois.geojson" !
   }

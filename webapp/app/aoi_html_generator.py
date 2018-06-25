@@ -41,18 +41,21 @@ class AoiHtmlGenerator():
         hulls = query_geometries(query)
         return generate_map_html(self.location, hulls, style=None)
 
-    def aois_html(self):
+    def sanitize_aois_html(self, style=None):
         aois_query = self.query_generator.extended_hulls_query()
         aois_query = self.query_generator.without_water_query(aois_query)
         aois_query = self.query_generator.sanitize_aois_query(aois_query)
 
         aois = query_geometries(aois_query)
-        return generate_map_html(self.location, aois, style=None)
+        return generate_map_html(self.location, aois, style=style)
+
+    def aois_html(self):
+        return self.sanitize_aois_html(style='final')
 
     def already_generated_aois_html(self):
         aois = gpd.read_file("static/aois.geojson")
         aois = aois[aois.geometry.notnull()]
-        return generate_map_html([47.372, 8.541], aois, style=None)
+        return generate_map_html([47.372, 8.541], aois, style='final')
 
     def aois_on_gmaps_html(self):
         aois = gpd.read_file("static/aois.geojson")
