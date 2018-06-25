@@ -44,7 +44,7 @@ class AoiHtmlGenerator():
     def aois_html(self):
         aois_query = self.query_generator.extended_hulls_query()
         aois_query = self.query_generator.without_water_query(aois_query)
-        aois_query = self.query_generator.sanatize_aois_query(aois_query)
+        aois_query = self.query_generator.sanitize_aois_query(aois_query)
 
         aois = query_geometries(aois_query)
         return generate_map_html(self.location, aois, style=None)
