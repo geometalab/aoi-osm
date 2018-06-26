@@ -3,13 +3,13 @@ import sbt.Keys.{libraryDependencies, mainClass, version}
 
 lazy val root = (project in file(".")).
   settings(
-    name := "OsmAOI",
+    name := "GenerateAois",
 
     version := "0.1.0",
 
     scalaVersion := "2.11.8",
 
-    mainClass in assembly := Some("QueryOsmAOI")
+    mainClass in assembly := Some("GenerateAois")
   )
 
 val SparkVersion = "2.3.0"
@@ -20,7 +20,7 @@ val HadoopVersion = "2.7.2"
 
 val GeoSparkVersion = "1.1.3"
 
-val dependencyScope = "compile"
+val dependencyScope = "provided"
 
 logLevel := Level.Warn
 

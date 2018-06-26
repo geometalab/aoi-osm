@@ -1,35 +1,26 @@
 import com.vividsolutions.jts.geom.Geometry
-import org.alitouka.spark.dbscan.{Dbscan, DbscanSettings, RawDataSet}
 import org.alitouka.spark.dbscan.spatial.Point
-import org.alitouka.spark.dbscan.DistributedDbscan
-import org.alitouka.spark.dbscan.spatial.rdd.PartitioningSettings
-import org.apache.commons.math3.ml.clustering.DBSCANClusterer
-import org.apache.commons.math3.ml.clustering.Cluster
+import org.alitouka.spark.dbscan.{Dbscan, DbscanSettings}
+import org.apache.commons.math3.ml.clustering.{Cluster, DBSCANClusterer}
 import org.apache.log4j.{Level, Logger}
-import org.apache.spark.api.java.JavaPairRDD
-import org.apache.spark.rdd.RDD
 import org.apache.spark.serializer.KryoSerializer
-import org.apache.spark.sql.{Row, SparkSession}
 import org.apache.spark.sql.types._
-import org.datasyslab.geospark.enums.GridType
+import org.apache.spark.sql.{Row, SparkSession}
 import org.datasyslab.geospark.serde.GeoSparkKryoRegistrator
-import org.datasyslab.geospark.spatialOperator.JoinQuery
 import org.datasyslab.geospark.spatialRDD.SpatialRDD
 import org.datasyslab.geosparksql.utils.{Adapter, GeoSparkSQLRegistrator}
-import sys.process._
 
 import scala.collection.JavaConverters._
-import scala.reflect.io.Path
-import scala.util.Try
+import scala.sys.process._
 
-object Clustering extends App {
+object GenerateAois extends App {
   Logger.getLogger("org").setLevel(Level.WARN)
   Logger.getLogger("akka").setLevel(Level.WARN)
 
   var sparkSession:SparkSession = SparkSession.builder()
     .config("spark.serializer", classOf[KryoSerializer].getName)
     .config("spark.kryo.registrator", classOf[GeoSparkKryoRegistrator].getName)
-    .master("local[*]")
+    //.master("local[*]")
     .appName("Generate Parquet").getOrCreate()
 
   GeoSparkSQLRegistrator.registerAll(sparkSession)
@@ -41,8 +32,13 @@ object Clustering extends App {
   }
 */
   def dbscanClustering() = {
-    sparkSession.read.parquet("out/points.parquet").createOrReplaceTempView("points")
-    sparkSession.read.parquet("out/polygons.parquet").createOrReplaceTempView("polygons")
+    print("enter num partitions:")
+    val num_partitions = scala.io.StdIn.readLine().toInt
+
+    val t0 = System.nanoTime()
+
+    sparkSession.read.parquet("/data/out/points.parquet").createOrReplaceTempView("points")
+    sparkSession.read.parquet("/data/out/polygons.parquet").createOrReplaceTempView("polygons")
 
     val tagConditions = Settings.tags.map { case (key, values) => "array_contains(array("+values.map { value => "'" + value + "'"} .mkString(",")+"), "+key+")" }.toList
     val tagConditionsQuery = tagConditions.mkString(" OR ")
@@ -67,6 +63,9 @@ object Clustering extends App {
     """ ) LIMIT 1000""".stripMargin)
     */
 
+    poisDataFrame.repartition(num_partitions)
+
+
     println("relevant pois (count:" + poisDataFrame.count() + "): ")
     poisDataFrame.show(10)
 
@@ -82,6 +81,7 @@ object Clustering extends App {
     val preclusteredPois = model.clusteredPoints.map { point => Row(point.coordinates(0), point.coordinates(1), point.clusterId)}
     println("total pre-clusters: " + preclusteredPois.count())
     preclusteredPois.take(10).foreach(println)
+
 
     println("calculate areas of pre-clusters...")
     val schema = new StructType(Array(StructField("x",DoubleType),StructField("y",DoubleType),StructField("cluster_id",LongType)))
@@ -106,6 +106,9 @@ object Clustering extends App {
         |FROM preclustered_pois, preclusters
         |WHERE preclusters.cluster_id = preclustered_pois.cluster_id AND preclustered_pois.cluster_id > 0""".stripMargin).rdd
     preclusteredPoisWithMinPts.take(10).foreach(println)
+
+    preclusteredPoisWithMinPts.count()
+    println("Pre-Clustering time: " + (System.nanoTime() - t0) / 1000 / 1000 / 1000 + "s")
 
     println("calculate DBSCAN for each pre-cluster")
     val aois = preclusteredPoisWithMinPts.groupBy(poi => poi.getLong(0)).map {
@@ -134,11 +137,18 @@ object Clustering extends App {
     val aoisDataFrame = sparkSession.sql("SELECT ST_ConvexHull(ST_Envelope_Aggr(geometry)) AS aoi FROM clustered_pois GROUP BY cluster_id")
 
     println("final aois count: " + aoisDataFrame .count())
+    println("Clustering time: " + (System.nanoTime() - t0) / 1000 / 1000 / 1000 + "s")
+
+
     val spatialAoisRDD = new SpatialRDD[Geometry]
     spatialAoisRDD.rawSpatialRDD = Adapter.toRdd(aoisDataFrame)
-    "rm -R out/aois.export" !;
-    spatialAoisRDD.saveAsGeoJSON("out/aois.export")
+    "rm -R /data/out/aois.export" !;
+    spatialAoisRDD.saveAsGeoJSON("/data/out/aois.export")
 
-    "cat out/aois.export/* | sed '$!s/$/,/' > out/aois.geojson" !
+    "cat /data/out/aois.export/* | sed '$!s/$/,/' > /data/out/aois.geojson" !
+
+    println("Export time: " + (System.nanoTime() - t0) / 1000 / 1000 / 1000 + "s")
+
+    scala.io.StdIn.readLine()
   }
 }
