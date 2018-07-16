@@ -21,11 +21,9 @@ services:
       - PGHOST=postgres
       - PGUSER=postgres
       - PGDATABASE=gis
-    env_file:
-      - .env
     volumes:
       - ./data/:/data/
-      - ./notebooks/notebooks://home/jovyan/
+      - ./notebooks/notebooks:/kome/jovyan/
     ports:
       - "8888:8888"
     depends_on:
