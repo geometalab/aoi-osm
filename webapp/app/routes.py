@@ -15,7 +15,10 @@ def index():
                                          hull_algorithm=form.hull_algorithm_value())
 
         if aoi_generator.any_aoi():
-            return render_template('aoi.html', aoi_generator=aoi_generator, explain=form.explain_value())
+            return render_template('aoi.html',
+                                   aoi_generator=aoi_generator,
+                                   explain=form.explain_value(),
+                                   extend_network_centrality=form.extend_network_centrality_value())
         else:
             return render_template('no_aoi.html')
 

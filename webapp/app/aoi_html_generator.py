@@ -8,9 +8,13 @@ from app.database import query_geometries
 
 
 class AoiHtmlGenerator():
-    def __init__(self, location=None, hull_algorithm='convex'):
+    def __init__(self,
+                 location=None,
+                 hull_algorithm='convex',
+                 extend_network_centrality=False):
         self.query_generator = AoiQueryGenerator(location, hull_algorithm)
         self.location = location
+        self.extend_network_centrality = extend_network_centrality
 
     def any_aoi(self):
         clusters = query_geometries(self.query_generator.clusters_query())
@@ -37,12 +41,12 @@ class AoiHtmlGenerator():
         return generate_map_html(self.location, hulls, style=None)
 
     def without_water_html(self):
-        query = self.query_generator.without_water_query(self.query_generator.extended_hulls_query())
+        query = self.query_generator.without_water_query(self.hulls_query())
         hulls = query_geometries(query)
         return generate_map_html(self.location, hulls, style=None)
 
     def sanitize_aois_html(self, style=None):
-        aois_query = self.query_generator.extended_hulls_query()
+        aois_query = self.hulls_query()
         aois_query = self.query_generator.without_water_query(aois_query)
         aois_query = self.query_generator.sanitize_aois_query(aois_query)
 
@@ -51,6 +55,12 @@ class AoiHtmlGenerator():
 
     def aois_html(self):
         return self.sanitize_aois_html(style='final')
+
+    def hulls_query(self):
+        if self.extend_network_centrality:
+            return self.query_generator.extended_hulls_query()
+        else:
+            return self.query_generator.hulls_query()
 
     def already_generated_aois_html(self):
         aois = gpd.read_file("static/aois.geojson")

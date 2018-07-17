@@ -9,7 +9,7 @@
   {% if explain: %}
     <div class="row">
       <h2>
-        1. Get all polygons with tags
+        Get all polygons with tags
       </h2>
 
       <div class="step polygons">
@@ -29,7 +29,7 @@
     </div>
 
     <div class="row">
-      <h2>2. Cluster polygons with DBSCAN</h2>
+      <h2>Cluster polygons with DBSCAN</h2>
 
       <div class="step cluster">
         <div class="description">
@@ -45,7 +45,7 @@
     </div>
 
     <div class="row">
-      <h2>3. Create {{aoi_generator.hull_algorithm}} hulls arround clusters</h2>
+      <h2>Create {{aoi_generator.hull_algorithm}} hulls arround clusters</h2>
 
       <div class="step hulls">
         <div class="description">
@@ -59,8 +59,9 @@
       </div>
     </div>
 
+  {% if extend_network_centrality: %}
     <div class="row">
-      <h2>4. Extend using network centrality</h2>
+      <h2>Extend using network centrality</h2>
       <div class="step aoi">
         <div class="description">
           Therefore:
@@ -84,9 +85,10 @@
         </div>
       </div>
     </div>
+  {% endif %}
 
     <div class="row">
-      <h2>5. Exclude waterways and water</h2>
+      <h2>Exclude waterways and water</h2>
       <div class="step aoi">
         <div class="description">
           If present...
@@ -99,7 +101,7 @@
     </div>
 
     <div class="row">
-      <h2>6. Sanitize</h2>
+      <h2>Sanitize</h2>
       <div class="step aoi">
         <div class="description">
           <ul>

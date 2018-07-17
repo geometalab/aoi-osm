@@ -13,6 +13,7 @@ class AoiForm(FlaskForm):
     custom_location = TextField('Custom Location', render_kw={"placeholder": "e.g. 47.3720, 8.5417"})
     tags = StringField('Tags', widget=TextArea(), default=settings.DEFAULT_TAGS, render_kw={'readonly': True})
     hull_algorithm = RadioField('Hull Algorithm', choices=[('convex', 'Convex'), ('concave', 'Concave(0.99)')], default='convex')
+    extend_network_centrality = BooleanField("Extend with network centrality (much slower!)")
     explain = BooleanField("Explain steps when generating AOIs (slower)")
 
     submit = SubmitField('Generate AOIs')
@@ -29,6 +30,9 @@ class AoiForm(FlaskForm):
 
     def hull_algorithm_value(self):
         return self.hull_algorithm.data
+
+    def extend_network_centrality_value(self):
+        return self.extend_network_centrality.data
 
     def explain_value(self):
         return self.explain.data
