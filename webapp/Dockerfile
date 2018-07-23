@@ -8,10 +8,11 @@ RUN apt-get update && \
     apt-get install --no-install-recommends --yes osm2pgsql gdal-bin postgresql-client && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
+ADD requirements.txt /tmp/requirememts.txt
+RUN pip install -r /tmp/requirememts.txt
+
 ADD . /webapp
 WORKDIR /webapp
-
-RUN pip install -r requirements.txt
 
 ENV FLASK_APP="webapp.py"
 ENV FLASK_DEBUG=False
