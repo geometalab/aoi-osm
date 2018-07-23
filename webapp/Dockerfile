@@ -12,6 +12,7 @@ ADD requirements.txt /tmp/requirememts.txt
 RUN pip install -r /tmp/requirememts.txt
 
 ADD . /webapp
+RUN mkdir -p /webapp/tmp
 WORKDIR /webapp
 
 ENV FLASK_APP="webapp.py"
