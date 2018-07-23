@@ -69,7 +69,7 @@ DEFAULT_TAGS = """
     "hairdresser",
     "medical_supply",
     "electrical",
-    "hareware",
+    "hardware",
     "electronics",
     "sports",
     "swimming_pool",
