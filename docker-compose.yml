@@ -7,6 +7,7 @@ services:
       - PGHOST=postgres
       - PGUSER=postgres
       - PGDATABASE=gis
+      - FLASK_DEBUG=true
     volumes:
       - ./webapp:/webapp/
       - ./data/:/data/
