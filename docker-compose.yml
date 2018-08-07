@@ -23,7 +23,7 @@ services:
       - PGDATABASE=gis
     volumes:
       - ./data/:/data/
-      - ./notebooks/notebooks:/kome/jovyan/
+      - ./notebooks/notebooks:/home/jovyan/
     ports:
       - "8888:8888"
     depends_on:
