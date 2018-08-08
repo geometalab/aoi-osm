@@ -15,6 +15,8 @@ This software is mainly using PostgreSQL/PostGIS (SQL) and Python, accompanied w
 
 ### How to install
 
+See https://github.com/geometalab/aoi-osm/blob/master/webapp/README.md
+
 TODO. 
 
 ### About Areas-of-Interest
@@ -45,6 +47,8 @@ Roughly five processing steps are currently used to generate these AOI:
 The parameters eps and minPts of the DBSCAN algorithm have been heuristically adjusted and are calculated in a locally adapted way.
 
 ![AOI of Zürich](image.png)
+
+_Figure: AOI of the city center of Zurich (Switzerland)._
 
 ### References
 
