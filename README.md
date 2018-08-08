@@ -11,8 +11,6 @@ There are following main directories with individual READMEs:
 * `notebooks/` Prototyping environment for the AOI generation process
 * `webapp/` Simple demo web app PostgreSQL implementation of AOI
 
-There's also a directory, `geospark/` (and `postgres/`), containing experiments with Apache Spark, which is rudimentary and only partially working.
-
 There exists also an online demo web application. There is no warranty about the availability of this demo and access can be given on demand.
 
 ### How to install

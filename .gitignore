@@ -204,8 +204,6 @@ postgres/alter_config.sh
 \.conda/
 \.cache/
 
-spark_cluster/storage/
-spark_cluster/data/
 out/
 
 notebooks/work/\.bash_history
