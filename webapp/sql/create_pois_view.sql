@@ -15,7 +15,7 @@ CREATE MATERIALIZED VIEW pois AS (
                 'seafood', 'spices', 'tea', 'department_store', 'supermarket',
                 'bag', 'boutique', 'clothes', 'fashion', 'jewelry', 'leather',
                 'shoes', 'tailor', 'watches', 'chemist', 'cosmetics',
-                'hairdresser', 'medical_supply', 'electrical', 'hareware',
+                'hairdresser', 'medical_supply', 'electrical', 'hardware',
                 'electronics', 'sports', 'swimming_pool', 'collector', 'games',
                 'music', 'books', 'gift', 'stationery', 'ticket', 'laundry',
                 'pet', 'tobacco', 'toys'])
@@ -46,7 +46,7 @@ CREATE MATERIALIZED VIEW pois AS (
                 'seafood', 'spices', 'tea', 'department_store', 'supermarket',
                 'bag', 'boutique', 'clothes', 'fashion', 'jewelry', 'leather',
                 'shoes', 'tailor', 'watches', 'chemist', 'cosmetics',
-                'hairdresser', 'medical_supply', 'electrical', 'hareware',
+                'hairdresser', 'medical_supply', 'electrical', 'hardware',
                 'electronics', 'sports', 'swimming_pool', 'collector', 'games',
                 'music', 'books', 'gift', 'stationery', 'ticket', 'laundry',
                 'pet', 'tobacco', 'toys'])
