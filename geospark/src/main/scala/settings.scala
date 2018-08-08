@@ -69,7 +69,7 @@ object Settings {
             "hairdresser",
             "medical_supply",
             "electrical",
-            "hareware",
+            "hardware",
             "electronics",
             "sports",
             "swimming_pool",
