@@ -7,7 +7,7 @@ be implemented with Apache Spark.
 
 To get started, open this project with [Intellij](https://www.jetbrains.com/idea/).
 
-First the OpenStreetMap data needs to be converted to Parquet files. Therefore,
+First the OpenStreetMap data needs to be converted to Parquet files. To do that,
 open `OsmToParquet.scala` file and point the database configuration to a PostgreSQL
 database with an import of `osm2pgsql`. When executing, two Parquet files
 `points.parquet` and `polygons.parquet` gets created.
