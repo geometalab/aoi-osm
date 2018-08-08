@@ -2,22 +2,20 @@
 
 ### About this repository
 
-![AOI of Zürich](image.png)
-
 This repository contains the (minimally) maintained source code which mainly generates Areas-of-Interest (AOI) for and with OpenStreetMap. This code was initially developped in a master thesis by Koster (2018) at Geometa Lab HSR.
 
 There are following main directories with individual READMEs:
 
-* `notebooks/` Prototyping environment for the AOI generation process
-* `webapp/` Simple demo web app PostgreSQL implementation of AOI
+* `notebooks/` Prototyping environment for the AOI generation process  (Jupyter).
+* `webapp/` Simple web app of AOI, as well as containing an AOI polygon generator script.
 
-There's also a directory, `geospark/` (and `postgres/`), containing experiments with Apache Spark, which is rudimentary and only partially working.
+The simple web app is deployed also online, but there is no warranty about the availability of it. Access can be given on demand.
 
-There exists also an online demo web application. There is no warranty about the availability of this demo and access can be given on demand.
+This software is mainly using PostgreSQL/PostGIS (SQL) and Python, accompanied with the OSMnx library for analyzing the street network. 
 
 ### How to install
 
-TODO
+TODO. 
 
 ### About Areas-of-Interest
 
@@ -45,6 +43,8 @@ Roughly five processing steps are currently used to generate these AOI:
 1. sanitizing the AOI e.g. by removing water areas and eliminating sliver polygons. 
 
 The parameters eps and minPts of the DBSCAN algorithm have been heuristically adjusted and are calculated in a locally adapted way.
+
+![AOI of Zürich](image.png)
 
 ### References
 
