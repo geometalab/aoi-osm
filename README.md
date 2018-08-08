@@ -1,19 +1,51 @@
-## Areas-of-Interest for OpenStreetMap
+## Areas-of-Interest for and with OpenStreetMap
+
+### About this repository
 
 ![AOI of Zürich](image.png)
 
-This repository contains the source code of my thesis, which aims to evaluate
-the use of big data technologies for spatial Geodata. As use case,
-Areas-of-Interest (AOI) based on OpenStreetMap data are generated.
+This repository contains the (minimally) maintained source code which mainly generates Areas-of-Interest (AOI) for and with OpenStreetMap. This code was initially developped in a master thesis by Philip Koster (2018) at Geometa Lab HSR.
 
-> AOI have been introduced in GMaps around mid 2016. They highlight places with
-> the highest concentration of restaurants, shops and bars in an light orange
-> style.
+There are following main directories with individual READMEs:
 
-The repository contains the following parts with individual READMEs:
+* notebooks/ Prototyping environment for the AOI generation process
+* webapp/ Simple demo web app PostgreSQL implementation of AOI
 
-* [notebooks](https://github.com/philippks/ma-osm-aoi/tree/master/notebooks): used for fast prototyping
-* [webapp](https://github.com/philippks/ma-osm-aoi/tree/master/webapp): PostgreSQL implementation
-* [geospark](https://github.com/philippks/ma-osm-aoi/tree/master/geospark): Apache Spark implementation
+There's also a directory, geospark/ (and postgres/), containing experiments with Apache Spark, which is rudimentary and only partially working.
 
-A demo web application to generate AOIs (using PostgreSQL) can be found [here](http://osm-aoi.kdev.ch).
+There exists also an online demo web application. There is no warranty about the availability of this demo and access can be given on demand.
+
+### About Areas-of-Interest
+
+The objective of Areas-of-Interest (AOI) is to convey visual information to a user (map reader or tourist) where there are areas are of "high interest" regarding facilities like shopping, eating, accomodation, sightseeing or leisure.
+
+The use of AOI comprises touristic applications as well as urban planning and location-allocation analysis and site selection.  
+AOI are also used to identify completeness of OpenStreetMap (POI) data (see [wiki page about Completeness](https://wiki.openstreetmap.org/wiki/Completeness) and Clough, 2018).
+The preferred spatial resolution of this dataset is between 10 and 2 meters on the ground (zoom levels from 16 to 14).
+
+A main input of AOI are Points-of-Interest (POI). Typical POI are restaurants, bars, shops or museums. While POI are mostly punctual, the geometry of AOI is of type area or polygon. In fact, AOI can be also based on the street network and potentially on more information like human location tracks. Google introduced 2016 AOI in their map products and visualized it as orange shades. Google is reportedly using human location tracks to derive information of "high activity" but did not disclose the algorithms behind their AOI layer.
+
+### About this approach
+
+The goal of this project is to produce AOI with a reproducible process which is based on open data, specifically POI and pedestrian routing data from the OpenStreetMap crowdsourcing project. The AOI are defined here as 
+
+> "Urban area at city or neighbourhood level with a high concentration of Points-of-Interests (POI) and 
+> typically located along a street of high spatial importance". 
+
+Roughly five processing steps are currently used to generate these AOI: 
+
+1. filtering relevant POI (taking POI from OpenStreetMap as input), 
+1. spatially clustering selected POI using the DBSCAN algorithm, 
+1. creating areas using concave hull algorithm, 
+1. extend the resulting areas with a certain spatial buffer based on a network centrality algorithm (taking routes as input), 
+1. sanitizing the AOI e.g. by removing water areas and eliminating sliver polygons. 
+
+The parameters eps and minPts of the DBSCAN algorithm have been heuristically adjusted and are calculated in a locally adapted way.
+
+### References
+
+To reference this work you can use the DOI mentioned below.
+
+* Koster, Philipp (2018): Areas-of-Interest from OpenStreetMap (Switzerland). PANGAEA, https://doi.pangaea.de/10.1594/PANGAEA.892644 (DOI registration in progress).
+* Keller S. (2018): "Areas-of-Interest for OpenStreetMap with Big Spatial Data Analytics". Presentation at Academic Track of State Of The Map 2018, Milano (Italy). https://2018.stateofthemap.org/2018/A30-Areas-of-Interest_for_OpenStreetMap_with_Big_Spatial_Data_Analytics_/
+* Clough, J. (2018): "Can we identify 'completeness' of OpenStreetMap features from the data?" Blog post. http://sk53-osm.blogspot.com/2018/07/can-we-identify-completeness-of.html 
