@@ -12,5 +12,5 @@ open `OsmToParquet.scala` file and point the database configuration to a Postgre
 database with an import of `osm2pgsql`. When executing, two Parquet files
 `points.parquet` and `polygons.parquet` get created.
 
-Afterwards, the file `GenerateAois.scala` can be executed, what generates the
+Afterwards, the file `GenerateAois.scala` can be executed, which generates the
 `aois.geojson`.
