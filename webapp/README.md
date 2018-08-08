@@ -36,7 +36,7 @@ Now one can access the web interface at http://localhost:5000.
 
 ## Export AOIs
 
-When the container is prepared for the webapp, one can export the AOIs to a
+When the container is prepared for the webapp, one can export the AOIs to
 GeoJSON using the script `create_aois.py`.
 
 ```bash
