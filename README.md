@@ -4,16 +4,20 @@
 
 ![AOI of Zürich](image.png)
 
-This repository contains the (minimally) maintained source code which mainly generates Areas-of-Interest (AOI) for and with OpenStreetMap. This code was initially developped in a master thesis by Philip Koster (2018) at Geometa Lab HSR.
+This repository contains the (minimally) maintained source code which mainly generates Areas-of-Interest (AOI) for and with OpenStreetMap. This code was initially developped in a master thesis by Koster (2018) at Geometa Lab HSR.
 
 There are following main directories with individual READMEs:
 
-* notebooks/ Prototyping environment for the AOI generation process
-* webapp/ Simple demo web app PostgreSQL implementation of AOI
+* `notebooks/` Prototyping environment for the AOI generation process
+* `webapp/` Simple demo web app PostgreSQL implementation of AOI
 
-There's also a directory, geospark/ (and postgres/), containing experiments with Apache Spark, which is rudimentary and only partially working.
+There's also a directory, `geospark/` (and `postgres/`), containing experiments with Apache Spark, which is rudimentary and only partially working.
 
 There exists also an online demo web application. There is no warranty about the availability of this demo and access can be given on demand.
+
+### How to install
+
+TODO
 
 ### About Areas-of-Interest
 
@@ -46,6 +50,6 @@ The parameters eps and minPts of the DBSCAN algorithm have been heuristically ad
 
 To reference this work you can use the DOI mentioned below.
 
-* Koster, Philipp (2018): Areas-of-Interest from OpenStreetMap (Switzerland). PANGAEA, https://doi.pangaea.de/10.1594/PANGAEA.892644 (DOI registration in progress).
+* Koster, Ph. (2018): Areas-of-Interest from OpenStreetMap (Switzerland). PANGAEA, https://doi.pangaea.de/10.1594/PANGAEA.892644 (DOI registration in progress).
 * Keller S. (2018): "Areas-of-Interest for OpenStreetMap with Big Spatial Data Analytics". Presentation at Academic Track of State Of The Map 2018, Milano (Italy). https://2018.stateofthemap.org/2018/A30-Areas-of-Interest_for_OpenStreetMap_with_Big_Spatial_Data_Analytics_/
 * Clough, J. (2018): "Can we identify 'completeness' of OpenStreetMap features from the data?" Blog post. http://sk53-osm.blogspot.com/2018/07/can-we-identify-completeness-of.html 
