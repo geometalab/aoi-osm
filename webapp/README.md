@@ -18,7 +18,7 @@ This will import the file `data/switzerland.osm.pbf` to the database. To change
 the file, edit the import script `webapp/import_osm.sh`.
 
 Since not all OSM elements are necessary for generating AOIs, one can filter
-the `osm.pbf` file before importing it. For that, osmfilter can be used. An
+the `osm.pbf` file before importing it. osmfilter can be used for that. An
 example is provided in the file `pbf_filter_example.sh`.
 
 Prepare the POIs:
@@ -37,7 +37,7 @@ Now one can access the web interface at http://localhost:5000.
 ## Export AOIs
 
 When the container is prepared for the webapp, one can export the AOIs to a
-GeoJSON. To do that, use the script `create_aois.py`.
+GeoJSON using the script `create_aois.py`.
 
 ```bash
 docker-compose run --rm webapp python create_aois.py --help
