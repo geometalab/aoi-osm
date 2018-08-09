@@ -3,4 +3,7 @@ List of AOI test cases:
 * Zürich City (CH);
 * Stäfa (CH);
 * Halle (BE); 50.73601,4.23786
+* UBS IT centre in Altstetten/Zürich (???)
+* English East Midlands (???)
+* Germany (???)
 * ...
