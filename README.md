@@ -23,9 +23,9 @@ TODO.
 
 The objective of Areas-of-Interest (AOI) is to convey visual information to a user (map reader or tourist) where there are areas are of "high interest" regarding facilities like shopping, eating, accomodation, sightseeing or leisure.
 
-The use of AOI comprises touristic applications as well as urban planning and location-allocation analysis and site selection.  
-AOI are also used to identify completeness of OpenStreetMap (POI) data (see [wiki page about Completeness](https://wiki.openstreetmap.org/wiki/Completeness) and Clough, 2018).
-The preferred spatial resolution of this dataset is between 10 and 2 meters on the ground (zoom levels from 16 to 14).
+The use of AOI comprises touristic applications as well as urban planning, location-allocation analysis and site selection.. Inspired by biology AOI are also used to identify completeness of OpenStreetMap (POI) data by comparing the accumulation of POI (within AOI) with species discovery curves (aka negative exponential functions) (Clough 2018).
+
+The preferred spatial resolution of this dataset is between 10 and 2 meters on the ground (zoom levels from 16 to 14) which is around the scale of 1:5000 (general plan).
 
 A main input of AOI are Points-of-Interest (POI). Typical POI are restaurants, bars, shops or museums. While POI are mostly punctual, the geometry of AOI is of type area or polygon. In fact, AOI can be also based on the street network and potentially on more information like human location tracks. Google introduced 2016 AOI in their map products and visualized it as orange shades. Google is reportedly using human location tracks to derive information of "high activity" but did not disclose the algorithms behind their AOI layer.
 
