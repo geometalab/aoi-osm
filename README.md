@@ -54,6 +54,7 @@ _Figure: AOI of the city center of Zurich (Switzerland)._
 
 To reference this work you can use the DOI mentioned below.
 
+* Koster, Ph. (2018): Big Spatial Data Analysis and Processing. HSR Hochschule für Technik Rapperswil. Unpublished master's thesis. Online http://eprints.hsr.ch/72/
 * Koster, Ph. (2018): Areas-of-Interest from OpenStreetMap (Switzerland). PANGAEA, https://doi.pangaea.de/10.1594/PANGAEA.892644 (DOI registration in progress).
 * Keller S. (2018): "Areas-of-Interest for OpenStreetMap with Big Spatial Data Analytics". Presentation at Academic Track of State Of The Map 2018, Milano (Italy). https://2018.stateofthemap.org/2018/A30-Areas-of-Interest_for_OpenStreetMap_with_Big_Spatial_Data_Analytics_/
 * Clough, J. (2018): "Can we identify 'completeness' of OpenStreetMap features from the data?" Blog post. http://sk53-osm.blogspot.com/2018/07/can-we-identify-completeness-of.html 
