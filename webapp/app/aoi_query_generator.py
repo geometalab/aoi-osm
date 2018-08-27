@@ -11,6 +11,7 @@ import fiona
 from tqdm import tqdm
 from app.database import query_geometries
 import logging
+from app import settings
 
 
 class AoiQueryGenerator():
@@ -25,8 +26,8 @@ class AoiQueryGenerator():
         location_3857 = " ".join([str(coordinate) for coordinate in location_3857])
 
         return """
-        (SELECT ST_Buffer(ST_GeomFromText('POINT({})', 3857), 1000) AS bbox)
-        """.format(location_3857)
+        (SELECT ST_Buffer(ST_GeomFromText('POINT({})', 3857), {}) AS bbox)
+        """.format(location_3857, settings.DEFAULT_RADIUS)
 
     def polygons_query(self):
         if self.location is None:

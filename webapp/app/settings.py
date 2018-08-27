@@ -106,3 +106,5 @@ DEFAULT_LOCATIONS = [
     ('45.4647, 9.1911', 'Milano'),
 
 ]
+
+DEFAULT_RADIUS = 1000

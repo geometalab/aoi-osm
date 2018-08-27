@@ -45,6 +45,7 @@ class AoiForm(FlaskForm):
     location = SelectField('Location', choices=settings.DEFAULT_LOCATIONS, validators=[OtherFieldNotEmpty('custom_location')])
     custom_location = StringField('Custom Location', render_kw={"placeholder": "e.g. 47.3720, 8.5417"})
     tags = StringField('Tags', widget=TextArea(), default=settings.DEFAULT_TAGS, render_kw={'readonly': True})
+    radius = StringField('Radius', default=settings.DEFAULT_RADIUS, render_kw={'readonly': True})
     hull_algorithm = RadioField('Hull Algorithm', choices=[('convex', 'Convex'), ('concave', 'Concave(0.99)')], default='concave')
     extend_network_centrality = BooleanField("Extend with network centrality (much slower!)")
     explain = BooleanField("Explain steps when generating AOIs (slower)")
