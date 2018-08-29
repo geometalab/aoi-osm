@@ -105,3 +105,5 @@ INSERT INTO pois(geometry) (
   SELECT geometry
   FROM pois_v
 );
+
+CREATE INDEX pois_geometry  ON pois USING gist(geometry);
