@@ -9,8 +9,7 @@ Build the docker image:
 ```bash
 docker-compose build webapp
 ```
-
-Filtering the database (optional):
+Filtering the `osm.pbf` (optional):
 
 Since not all OSM elements are necessary for generating AOIs, one can filter
 the `osm.pbf` file before importing it. Therefore, osmfilter can be used. An
@@ -45,16 +44,20 @@ docker-compose run --rm webapp python create_aois.py tmp/aois.geojson
 ```
 The AOIs extract is created and will be found in the `./tmp` directory with file name of `aois.geojson`
 
-`--filter_boundary_path` argument filters the exported AOIs to those that intersects the boundary specified by this GeoJSON file
+`--filter_boundary_path` argument filters the exported AOIs to those that intersects the boundary specified by 
+Rapperswil-Jona_AL8.GeoJSON (GeoJSON file can be downloaded at https://wambachers-osm.website/boundaries/)
 
 ```bash
-docker-compose run --rm webapp python create_aois.py --filter_boundary_path tmp/aois.geojson
+docker-compose run --rm webapp python create_aois.py --filter_boundary_path ../../data/Rapperswil-Jona_AL8.GeoJSON
 ```
-The `--with_network_centrality` argument will provide a better AOIs by taking into account the network centrality using the closeness centrality algorithm. The resulting AOIs extract will thus include the important roads.
+
+The `--with_network_centrality` argument will provide a better AOIs by taking into account the network centrality using
+ the closeness centrality algorithm. The resulting AOIs extract will thus include the important roads.
 
 ## Configure PostgreSQL
 
-To alter the PostgreSQL configuration, the file `postgres/alter_config.sh` can be edited. The file is only executed with newly created docker container, with an empty `posgres/storage` directory.
+To alter the PostgreSQL configuration, the file `postgres/alter_config.sh` can be edited. The file is only executed with
+ newly created docker container, with an empty `posgres/storage` directory.
 
 Alternatively connect to the database yourself and execute the commands manually.
 
