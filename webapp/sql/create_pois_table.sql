@@ -15,8 +15,8 @@ CREATE OR REPLACE VIEW building AS
 		AND access IS DISTINCT FROM 'private'
 	);
 		
-INSERT INTO pois(geometry, osm_id, is_node) (
-	SELECT way, pois_subquery.osm_id, pois_subquery.is_node
+INSERT INTO pois(geometry) (
+	SELECT way
 	FROM (
 		SELECT
 			CASE 
