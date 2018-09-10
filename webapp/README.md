@@ -9,6 +9,10 @@ Build the docker image:
 ```bash
 docker-compose build webapp
 ```
+<Optional>
+Since not all OSM elements are necessary for generating AOIs, one can filter
+the `osm.pbf` file before importing it. Therefore, osmfilter can be used. An
+example is provided in the file `pbf_filter_example.sh`.
 
 Init the database:
 ```
@@ -16,10 +20,6 @@ docker-compose run --rm webapp bash import_osm.sh
 ```
 This will import the file `data/switzerland.osm.pbf` to the database. To change
 the file, edit the import script `webapp/import_osm.sh`.
-
-Since not all OSM elements are necessary for generating AOIs, one can filter
-the `osm.pbf` file before importing it. Therefore, osmfilter can be used. An
-example is provided in the file `pbf_filter_example.sh`.
 
 Prepare the POIs:
 ```
@@ -45,13 +45,14 @@ docker-compose run --rm webapp python create_aois.py --help
 
 For example:
 ```bash
-docker-compose run --rm webapp python create_aois.py --output_geojson tmp/aois.geojson
+docker-compose run --rm webapp python create_aois.py tmp/aois.geojson
 ```
+The AOIs extract is created and will be found in the ./tmp directory with file name of aois.geojson
 
-Or use the `--with_network_centrality` tag (this is much slower!)
 ```bash
 docker-compose run --rm webapp python create_aois.py --output_geojson tmp/aois.geojson
 ```
+The `--with_network_centrality` argument will provide a better AOIs by taking into account the network centrality using the closeness centrality algorithm. The resulting AOIs extract will thus include the important roads.
 
 ## Configure PostgreSQL
 
