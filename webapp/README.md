@@ -44,11 +44,11 @@ docker-compose run --rm webapp python create_aois.py tmp/aois.geojson
 ```
 The AOIs extract is created and will be found in the `./tmp` directory with file name of `aois.geojson`
 
-`--filter_boundary_path` argument filters the exported AOIs to those that intersects the boundary specified by 
+`--clip_boundary_path` argument clips the exported AOIs to those that intersects the boundary specified by 
 Rapperswil-Jona_AL8.GeoJSON (GeoJSON file can be downloaded at https://wambachers-osm.website/boundaries/)
 
 ```bash
-docker-compose run --rm webapp python create_aois.py --filter_boundary_path ../../data/Rapperswil-Jona_AL8.GeoJSON
+docker-compose run --rm webapp python create_aois.py tmp/clipped_aois.geojson --clip_boundary_path ../../data/Rapperswil-Jona_AL8.GeoJson
 ```
 
 The `--with_network_centrality` argument will provide a better AOIs by taking into account the network centrality using

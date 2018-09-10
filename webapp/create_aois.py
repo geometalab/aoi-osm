@@ -26,8 +26,8 @@ def is_valid_file(parser, arg):
 
 parser = argparse.ArgumentParser(description='Used to export the AOIs extract`')
 parser.add_argument('DEST', help='file path for the exported AOIs')
-parser.add_argument('--filter_boundary_path', default=None,
-                    help='filters the exported AOIs to those that intersects the boundary specified in this '
+parser.add_argument('--clip_boundary_path', default=None,
+                    help='clips the exported AOIs to those that intersects the boundary specified in this '
                          'GeoJSON file',
                     type=lambda x: is_valid_file(parser, x), metavar='PATH')
 parser.add_argument('--hull_algorithm', choices=['concave', 'convex'], default='convex',
@@ -36,7 +36,7 @@ parser.add_argument('--with_network_centrality', action='store_true', default=Fa
 args = parser.parse_args()
 
 start = time.time()
-aois_query_generator = AoiQueryGenerator(hull_algorithm=args.hull_algorithm, boundary=args.filter_boundary_path)
+aois_query_generator = AoiQueryGenerator(hull_algorithm=args.hull_algorithm, boundary=args.clip_boundary_path)
 
 if args.with_network_centrality:
     aois_query = aois_query_generator.extended_hulls_query()
