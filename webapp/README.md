@@ -19,7 +19,7 @@ Init the database:
 ```
 docker-compose run --rm webapp bash import_osm.sh
 ```
-This will import the file `data/switzerland.osm.pbf` to the database. To change
+This will import the file `data/planet-latest.osm.pbf` to the database. To change
 the file, edit the import script `webapp/import_osm.sh`.
 
 Prepare the POIs:
@@ -44,14 +44,14 @@ docker-compose run --rm webapp python create_aois.py tmp/aois.geojson
 ```
 The AOIs extract is created and will be found in the `./tmp` directory with file name of `aois.geojson`
 
-`--clip_boundary_path` argument clips the exported AOIs to those that intersects the boundary specified by 
+`--clip-boundary-path` argument clips the exported AOIs to those that intersects the boundary specified by 
 Rapperswil-Jona_AL8.GeoJSON (GeoJSON file can be downloaded at https://wambachers-osm.website/boundaries/)
 
 ```bash
-docker-compose run --rm webapp python create_aois.py tmp/clipped_aois.geojson --clip_boundary_path ../../data/Rapperswil-Jona_AL8.GeoJson
+docker-compose run --rm webapp python create_aois.py tmp/clipped_aois.geojson --clip-boundary-path ../../data/Rapperswil-Jona_AL8.GeoJson
 ```
 
-The `--with_network_centrality` argument will provide a better AOIs by taking into account the network centrality using
+The `--with-network-centrality` argument will provide a better AOIs by taking into account the network centrality using
  the closeness centrality algorithm. The resulting AOIs extract will thus include the important roads.
 
 ## Configure PostgreSQL

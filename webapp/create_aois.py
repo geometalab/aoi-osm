@@ -26,13 +26,13 @@ def is_valid_file(parser, arg):
 
 parser = argparse.ArgumentParser(description='Used to export the AOIs extract`')
 parser.add_argument('DEST', help='file path for the exported AOIs')
-parser.add_argument('--clip_boundary_path', default=None,
+parser.add_argument('--clip-boundary-path', default=None,
                     help='clips the exported AOIs to those that intersects the boundary specified in this '
                          'GeoJSON file',
                     type=lambda x: is_valid_file(parser, x), metavar='PATH')
-parser.add_argument('--hull_algorithm', choices=['concave', 'convex'], default='convex',
+parser.add_argument('--hull-algorithm', choices=['concave', 'convex'], default='convex',
                         help='algorthim used to create the hull (cluster)')
-parser.add_argument('--with_network_centrality', action='store_true', default=False)
+parser.add_argument('--with-network-centrality', action='store_true', default=False)
 args = parser.parse_args()
 
 start = time.time()
