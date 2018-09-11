@@ -5,11 +5,11 @@ CREATE TABLE pois (
     geometry geometry
 );
 
--- Note that public_building filters some pois such as sports_centre because 
--- sports centre is not a public_building
-CREATE OR REPLACE VIEW public_building AS
+-- Note that nonprivate_building filters some pois such as sports_centre as 
+-- sports centre is not a building 
+CREATE OR REPLACE VIEW nonprivate_building AS
     SELECT *
-    FROM planet_osm_polygon AS public_building
+    FROM planet_osm_polygon AS nonprivate_building
     WHERE (
         building IS NOT NULL
         AND access IS DISTINCT FROM 'private'
@@ -20,19 +20,19 @@ INSERT INTO pois(geometry) (
     FROM (
         SELECT
             CASE 
-                WHEN public_building.way IS NULL THEN ST_Buffer(point.way, 5, 1)
-                ELSE public_building.way
+                WHEN nonprivate_building.way IS NULL THEN ST_Buffer(point.way, 5, 1)
+                ELSE nonprivate_building.way
             END, point.amenity, point.shop, point.leisure, point.landuse, 
                 point.access
-        FROM public_building RIGHT JOIN planet_osm_point AS point 
-        ON ST_Within(point.way, public_building.way)
+        FROM nonprivate_building RIGHT JOIN planet_osm_point AS point 
+        ON ST_Within(point.way, nonprivate_building.way)
         
         UNION ALL
         
         SELECT way AS geometry, amenity, shop, leisure, landuse, "access"
-        -- Note that public_building filters some pois such as sports_centre 
-        -- because sports centre is  not a public_building that's why 
-        -- planet_osm_polygon is used instead
+        -- Note that nonprivate_building filters some pois such as sports_centre 
+        -- as sports centre is not a building that's why planet_osm_polygon is 
+        -- used instead
         FROM planet_osm_polygon
 
     )AS pois_subquery
