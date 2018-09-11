@@ -25,7 +25,7 @@ def is_valid_file(parser, arg):
 
 
 parser = argparse.ArgumentParser(description='Used to export the AOIs extract`')
-parser.add_argument('DEST', help='file path for the exported AOIs')
+parser.add_argument('dest', help='file path for the exported AOIs', metavar='DEST')
 parser.add_argument('--clip-boundary-path', default=None,
                     help='clips the exported AOIs to those that intersects the boundary specified in this '
                          'GeoJSON file',
@@ -51,10 +51,10 @@ CREATE TABLE aois_with_network_centrality(hull geometry);
 INSERT INTO aois_with_network_centrality ({})
     """.format(aois_query))
 
-    check_call(["rm", "-f", args.DEST])
+    check_call(["rm", "-f", args.dest])
     check_call(["ogr2ogr",
                 "-f", "GeoJSON",
-                args.DEST,
+                args.dest,
                 "PG:host=postgres dbname=gis user=postgres",
                 "-sql", "select st_transform(hull, 4326) from aois_with_network_centrality"])
 else:
@@ -70,10 +70,10 @@ CREATE TABLE aois_without_network_centrality(hull geometry);
 INSERT INTO aois_without_network_centrality ({})
     """.format(aois_query))
 
-    check_call(["rm", "-f", args.DEST])
+    check_call(["rm", "-f", args.dest])
     check_call(["ogr2ogr",
                 "-f", "GeoJSON",
-                args.DEST,
+                args.dest,
                 "PG:host=postgres dbname=gis user=postgres",
                 "-sql", "select st_transform(hull, 4326) from aois_without_network_centrality"])
 

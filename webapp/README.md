@@ -12,7 +12,7 @@ docker-compose build webapp
 Filtering the `osm.pbf` (optional):
 
 Since not all OSM elements are necessary for generating AOIs, one can filter
-the `osm.pbf` file before importing it. Therefore, osmfilter can be used. An
+the `osm.pbf` file before importing it. For that, osmfilter can be used. An
 example is provided in the file `pbf_filter_example.sh`.
 
 Init the database:
