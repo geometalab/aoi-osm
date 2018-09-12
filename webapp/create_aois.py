@@ -18,7 +18,10 @@ def is_valid_file(parser, arg):
     try:
         boundary_4326 = gpd.read_file(arg)
         boundary_4326 = boundary_4326.to_crs({'init': 'epsg:4326'})
+        if boundary_4326.size > 1:
+            raise ValueError(f"multiple geometry not allowed: '{arg}'")
         return boundary_4326
+
     except (Exception) as e:
         raise argparse.ArgumentTypeError(e) from e
 
@@ -28,7 +31,7 @@ parser = argparse.ArgumentParser(description='Used to export the AOIs extract`')
 parser.add_argument('dest', help='file path for the exported AOIs', metavar='DEST')
 parser.add_argument('--clip-boundary-path', default=None,
                     help='clips the exported AOIs to those that intersects the boundary specified in this '
-                         'GeoJSON file',
+                         'GeoJSON file (The file must contain only one geometry).',
                     type=lambda x: is_valid_file(parser, x), metavar='PATH')
 parser.add_argument('--hull-algorithm', choices=['concave', 'convex'], default='convex',
                         help='algorthim used to create the hull (cluster)')
