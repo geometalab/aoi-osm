@@ -1,6 +1,6 @@
 List of AOI test cases:
 
-* Geoname; Author; Coordinates (lat,lon); visual examplification
+* **Geoname; Author; Coordinates (lat,lon); visual examplification**
 * Rapperswil (CH); Stefan; 47.22692,8.82361;
 * Zürich City (CH); Stefan; ???
 * Stäfa (CH); Stefan; ???
