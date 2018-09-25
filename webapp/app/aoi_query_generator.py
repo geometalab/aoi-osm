@@ -12,6 +12,7 @@ from tqdm import tqdm
 from app.database import query_geometries
 import logging
 import json
+from app import settings
 
 # hides Fiona libraries logs
 logging.getLogger("Fiona").setLevel(logging.INFO)
@@ -28,9 +29,10 @@ class AoiQueryGenerator():
     def bbox_query(self):
         location_3857 = transform(Proj(init='epsg:4326'), Proj(init='epsg:3857'), self.location[1], self.location[0])
         location_3857 = " ".join([str(coordinate) for coordinate in location_3857])
-        return f"""
-        (SELECT ST_Buffer(ST_GeomFromText('POINT({location_3857})', 3857), 1000) AS bbox)
-        """
+        return """
+        (SELECT ST_Buffer(ST_GeomFromText('POINT({})', 3857), {}) AS bbox)
+        """.format(location_3857, settings.DEFAULT_RADIUS)
+
 
     def boundary_query(self):
         boundary_4326 = self.boundary
@@ -38,6 +40,7 @@ class AoiQueryGenerator():
         (SELECT * FROM ST_Transform(ST_SetSRid(ST_GeomFromGeoJSON('{json.dumps(
         boundary_4326.loc[0]['geometry'].__geo_interface__)}'), 4326), 3857) AS boundarybox) 
         """
+
 
     def polygons_query(self):
         if self.location is None:

@@ -3,7 +3,6 @@ from flask import render_template
 from app import app
 from app.forms import AoiForm
 from app.aoi_html_generator import AoiHtmlGenerator
-
 logging.basicConfig(level=logging.DEBUG)
 
 @app.route('/', methods=['GET', 'POST'])
