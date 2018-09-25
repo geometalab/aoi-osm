@@ -20,7 +20,7 @@ INSERT INTO pois(geometry) (
     FROM (
         SELECT
             CASE 
-                WHEN nonprivate_building.way IS NULL THEN ST_Buffer(point.way, 5, 1)
+                WHEN nonprivate_building.way IS NULL THEN ST_Buffer(point.way, 10, 1)
                 ELSE nonprivate_building.way
             END, point.amenity, point.shop, point.leisure, point.landuse, 
                 point.access
