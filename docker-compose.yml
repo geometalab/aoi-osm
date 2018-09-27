@@ -25,6 +25,7 @@ services:
     volumes:
       - ./data/:/data/
       - ./notebooks/notebooks:/home/jovyan/
+      - ./test-cases/:/test-cases/
     ports:
       - "8888:8888"
     depends_on:
