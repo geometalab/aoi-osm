@@ -1,6 +1,6 @@
-The [manual_aois](manual_aois/) directory contains the manually drawn AOIs. These AOIs are 
+The [manual_aoi](manual_aoi/) directory contains the manually drawn AOIs. These AOIs are 
 used as a benchmark for evaluating the optimal eps and minpoints arguments for 
-the DBSCAN algorithm. 
+the DBSCAN algorithm. Refer [here](../notebooks/notebooks/14%20-%20DBSCAN%20Parameter%20Optimizer.ipynb) for the jupyter prototype to evaluate the optimal eps and minpoints
 
 List of AOI test cases:
 
