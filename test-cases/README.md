@@ -1,3 +1,7 @@
+The [manual_aois] directory contains the manually drawn AOIs. These AOIs are 
+used as a benchmark for evaluating the optimal eps and minpoints arguments for 
+the DBSCAN algorithm. 
+
 List of AOI test cases:
 
 * **Geoname; Author; Coordinates (lat,lon); visual examplification**
