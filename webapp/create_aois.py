@@ -4,7 +4,7 @@ import psycopg2
 import time
 from app.aoi_query_generator import AoiQueryGenerator
 import geopandas as gpd
-
+import os
 
 def exec_sql(sql):
     with psycopg2.connect("") as connection:
@@ -41,6 +41,10 @@ args = parser.parse_args()
 start = time.time()
 aois_query_generator = AoiQueryGenerator(hull_algorithm=args.hull_algorithm, boundary=args.clip_boundary_path)
 
+# create directory if directory dont exist
+if not os.path.exists(os.path.dirname(args.dest)):
+    os.makedirs(os.path.dirname(args.dest))
+    
 if args.with_network_centrality:
     aois_query = aois_query_generator.extended_hulls_query()
     aois_query = aois_query_generator.without_water_query(aois_query)
@@ -79,6 +83,7 @@ INSERT INTO aois_without_network_centrality ({})
                 args.dest,
                 "PG:host=postgres dbname=gis user=postgres",
                 "-sql", "select st_transform(hull, 4326) from aois_without_network_centrality"])
+
 
 
 print("Creating aois took {}s".format(time.time() - start))
