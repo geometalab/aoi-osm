@@ -3,7 +3,6 @@ from flask import render_template
 from app import app
 from app.forms import AoiForm
 from app.aoi_html_generator import AoiHtmlGenerator
-
 logging.basicConfig(level=logging.DEBUG)
 
 @app.route('/', methods=['GET', 'POST'])
@@ -12,7 +11,8 @@ def index():
 
     if form.validate_on_submit():
         aoi_generator = AoiHtmlGenerator(location=form.location_coordinates(),
-                                         hull_algorithm=form.hull_algorithm_value())
+                                         hull_algorithm=form.hull_algorithm_value(),
+                                         extend_network_centrality=form.extend_network_centrality_value())
 
         if aoi_generator.any_aoi():
             return render_template('aoi.html',

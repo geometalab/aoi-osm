@@ -11,48 +11,68 @@ import fiona
 from tqdm import tqdm
 from app.database import query_geometries
 import logging
+import json
+from app import settings
+
+# hides Fiona libraries logs
+logging.getLogger("Fiona").setLevel(logging.INFO)
+logging.getLogger("fiona").setLevel(logging.INFO)
 
 
 class AoiQueryGenerator():
-    def __init__(self, location=None, hull_algorithm='convex'):
+    def __init__(self, location=None, hull_algorithm='convex', boundary=None):
         self.location = location
         self.hull_algorithm = hull_algorithm
-
+        self.boundary = boundary
         ox.utils.config(cache_folder='tmp/cache', use_cache=True)
 
     def bbox_query(self):
         location_3857 = transform(Proj(init='epsg:4326'), Proj(init='epsg:3857'), self.location[1], self.location[0])
         location_3857 = " ".join([str(coordinate) for coordinate in location_3857])
-
         return """
-        (SELECT ST_Buffer(ST_GeomFromText('POINT({})', 3857), 1000) AS bbox)
-        """.format(location_3857)
+        (SELECT ST_Buffer(ST_GeomFromText('POINT({})', 3857), {}) AS bbox)
+        """.format(location_3857, settings.DEFAULT_RADIUS)
+
+
+    def boundary_query(self):
+        boundary_4326 = self.boundary
+        return f"""
+        (SELECT * FROM ST_Transform(ST_SetSRid(ST_GeomFromGeoJSON('{json.dumps(
+        boundary_4326.loc[0]['geometry'].__geo_interface__)}'), 4326), 3857) AS boundarybox) 
+        """
+
 
     def polygons_query(self):
         if self.location is None:
             return "SELECT * FROM pois"
 
-        return """
-        SELECT * FROM pois WHERE st_intersects(geometry, {bbox})
-        """.format(bbox=self.bbox_query())
+        else:
+            return f"""
+                SELECT *
+                FROM pois 
+                WHERE ST_Intersects(geometry, {self.bbox_query()}) 
+                """
 
     def preclusters_subset_query(self):
         if self.location is None:
-            return "SELECT * FROM preclusters"
-
-        return """
-        SELECT * FROM preclusters WHERE st_intersects(hull, {bbox})
-        """.format(bbox=self.bbox_query())
+            if self.boundary is None:
+                return "SELECT * FROM preclusters"
+            else:
+                return f"SELECT * FROM preclusters WHERE ST_Intersects(hull, {self.boundary_query()})"
+        else:
+            return f"""
+            SELECT * FROM preclusters WHERE ST_Intersects(hull, {self.bbox_query()})
+            """
 
     def clusters_query(self):
-        return """
-        WITH preclusters_subset AS ({preclusters_subset_query})
+        return f"""
+        WITH preclusters_subset AS ({self.preclusters_subset_query()})
         SELECT preclusters_subset.id AS precluster_id,
                geometry,
                ST_ClusterDBSCAN(geometry, eps := 35, minpoints := preclusters_subset.dbscan_minpts) over () AS cid
         FROM pois, preclusters_subset
         WHERE ST_Within(geometry, preclusters_subset.hull)
-        """.format(preclusters_subset_query=self.preclusters_subset_query())
+        """
 
     def hulls_query(self):
         if self.hull_algorithm == 'concave':
@@ -60,22 +80,22 @@ class AoiQueryGenerator():
         else:
             hull = "ST_ConvexHull(ST_Union(geometry))"
 
-        return """
-        WITH clusters AS ({clusters_query})
+        return f"""
+        WITH clusters AS ({self.clusters_query()})
         SELECT cid, {hull} AS geometry
         FROM clusters
         WHERE cid IS NOT NULL
         GROUP BY cid
-        """.format(clusters_query=self.clusters_query(), hull=hull)
+        """
 
     def clusters_and_hulls_query(self):
-        return """
-        WITH clusters AS ({clusters_query}),
-        hulls AS ({hulls_query})
+        return f"""
+        WITH clusters AS ({self.clusters_query()}),
+        hulls AS ({self.hulls_query()}
         SELECT cid, geometry FROM clusters
         UNION ALL
         SELECT cid, geometry FROM hulls
-            """.format(clusters_query=self.clusters_query(), hulls_query=self.hulls_query())
+            """
 
     def network_centrality_query(self):
         return self.extended_hulls_query() + """

@@ -9,8 +9,7 @@
   <h1>AOIs with OpenStreetMap</h1>
 
   <p class="introduction">
-  Either <a href="browse">browse all AOIs of Switzerland</a> (<a href="gmaps">overlay on
-    GMaps</a>) or generate them for a specific location.
+  Either <a href="browse">browse all AOIs of Switzerland</a> or generate them for a location.
   </p>
 
   <form class="form form-horizontal" method="post" role="form">
@@ -22,9 +21,15 @@
       {{ wtf.form_field(form.location) }}
       </div>
 
-      <div class="col-md-offset-1 col-md-4">
+      <div class="col-md-offset-1 col-md-3">
       {{ wtf.form_field(form.custom_location) }}
       </div>
+
+      <div class="col-md-offset-1 col-md-3">
+      {{ wtf.form_field(form.radius) }}
+      </div>
+
+
     </div>
 
     <div class="row">
