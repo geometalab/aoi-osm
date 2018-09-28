@@ -49,7 +49,7 @@ Rapperswil-Jona_AL8.GeoJSON (GeoJSON file can be downloaded at https://wambacher
 and the file must contain only one geometry).
 
 ```bash
-docker-compose run --rm webapp python create_aois.py tmp/clipped_aois.geojson --clip-boundary-path ../../data/Rapperswil-Jona_AL8.GeoJson
+docker-compose run --rm webapp python create_aois.py tmp/clipped_aois.geojson --clip-boundary-path ../../data/clip/Rapperswil-Jona_AL8.GeoJson
 ```
 
 The `--with-network-centrality` argument will provide a better AOIs by taking into account the network centrality using
