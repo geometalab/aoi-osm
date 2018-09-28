@@ -18,7 +18,7 @@ def is_valid_file(parser, arg):
     try:
         boundary_4326 = gpd.read_file(arg)
         boundary_4326 = boundary_4326.to_crs({'init': 'epsg:4326'})
-        if boundary_4326.size > 1:
+        if boundary_4326['geometry'].size > 1:
             raise ValueError(f"multiple geometry not allowed: '{arg}'")
         return boundary_4326
 
