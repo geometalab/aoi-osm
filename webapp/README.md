@@ -39,21 +39,27 @@ Now one can access the web interface at http://localhost:5000.
 
 When the container is prepared for the webapp, the AOIs can be exported using the script `create_aois.py`
 
+The AOIs extract is created and will be found in the [../AOIs](../AOIs) directory with file name of `switzerland_aois.geojson`
+Note that the script is ran inside the webapp container so the path can be different. 
+This will be creating an AOI based on what you have imported in the 
+[import_osm.sh](./import_osm.sh)
+
 ```bash
-docker-compose run --rm webapp python create_aois.py tmp/aois.geojson
+docker-compose run --rm webapp python create_aois.py ../AOIs/switzerland_aois.geojson
 ```
-The AOIs extract is created and will be found in the `./tmp` directory with file name of `aois.geojson`
 
 `--clip-boundary-path` argument clips the exported AOIs to those that intersects the boundary specified by 
 Rapperswil-Jona_AL8.GeoJSON (GeoJSON file can be downloaded at https://wambachers-osm.website/boundaries/
 and the file must contain only one geometry).
 
+Generate AOIs of only Rapperswil-Jona:
 ```bash
-docker-compose run --rm webapp python create_aois.py tmp/clipped_aois.geojson --clip-boundary-path ../../data/Rapperswil-Jona_AL8.GeoJson
+docker-compose run --rm webapp python create_aois.py ../AOIs/clipped_aois.geojson --clip-boundary-path ../../data/clip/Rapperswil-Jona_AL8.GeoJson
 ```
 
 The `--with-network-centrality` argument will provide a better AOIs by taking into account the network centrality using
  the closeness centrality algorithm. The resulting AOIs extract will thus include the important roads.
+Note that this can take some time if enabled
 
 ## Configure PostgreSQL
 
