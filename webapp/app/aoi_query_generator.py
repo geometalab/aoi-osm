@@ -11,8 +11,8 @@ import fiona
 from tqdm import tqdm
 from app.database import query_geometries
 import logging
-import json
 from app import settings
+import json
 
 # hides Fiona libraries logs
 logging.getLogger("Fiona").setLevel(logging.INFO)
@@ -35,10 +35,13 @@ class AoiQueryGenerator():
 
 
     def boundary_query(self):
-        boundary_4326 = self.boundary
         return f"""
-        (SELECT * FROM ST_Transform(ST_SetSRid(ST_GeomFromGeoJSON('{json.dumps(
-        boundary_4326.loc[0]['geometry'].__geo_interface__)}'), 4326), 3857) AS boundarybox) 
+        (WITH feature_collection AS (SELECT '{self.boundary}'::json AS features)
+        SELECT ST_Transform(ST_SetSRid(ST_GeomFromGeoJSON(feature_col->>'geometry'), 4326), 3857) AS geometry
+        FROM (
+            SELECT json_array_elements(features->'features') AS feature_col
+            FROM feature_collection
+        ) AS subquery)
         """
 
 
@@ -58,7 +61,11 @@ class AoiQueryGenerator():
             if self.boundary is None:
                 return "SELECT * FROM preclusters"
             else:
-                return f"SELECT * FROM preclusters WHERE ST_Intersects(hull, {self.boundary_query()})"
+                return f"""
+                SELECT *
+                FROM preclusters
+                INNER JOIN {self.boundary_query()} AS boundary ON ST_Intersects(preclusters.hull, boundary.geometry)
+                """
         else:
             return f"""
             SELECT * FROM preclusters WHERE ST_Intersects(hull, {self.bbox_query()})
@@ -68,10 +75,10 @@ class AoiQueryGenerator():
         return f"""
         WITH preclusters_subset AS ({self.preclusters_subset_query()})
         SELECT preclusters_subset.id AS precluster_id,
-               geometry,
-               ST_ClusterDBSCAN(geometry, eps := 35, minpoints := preclusters_subset.dbscan_minpts) over () AS cid
+               pois.geometry,
+               ST_ClusterDBSCAN(pois.geometry, eps := 35, minpoints := preclusters_subset.dbscan_minpts) over () AS cid
         FROM pois, preclusters_subset
-        WHERE ST_Within(geometry, preclusters_subset.hull)
+        WHERE ST_Within(pois.geometry, preclusters_subset.hull)
         """
 
     def hulls_query(self):

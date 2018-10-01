@@ -50,7 +50,7 @@ docker-compose run --rm webapp python create_aois.py ../AOIs/switzerland_aois.ge
 
 `--clip-boundary-path` argument clips the exported AOIs to those that intersects the boundary specified by 
 Rapperswil-Jona_AL8.GeoJSON (GeoJSON file can be downloaded at https://wambachers-osm.website/boundaries/
-and the file must contain only one geometry).
+).
 
 Generate AOIs of only Rapperswil-Jona:
 ```bash
