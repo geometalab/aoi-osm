@@ -72,7 +72,9 @@ class AoiQueryGenerator():
 
     def hulls_query(self):
         if self.hull_algorithm == 'concave':
-            hull = 'ST_ConcaveHull(ST_Union(geometry), 0.999)'
+            # The following should not be needed, but somehow is...
+            # hull = 'ST_ConcaveHull(ST_Union(geometry), 0.999)'
+            hull = 'ST_MakeValid(ST_SnapToGrid(ST_ConcaveHull(ST_Union(geometry), 0.999), 0.0001))'
         else:
             hull = "ST_ConvexHull(ST_Union(geometry))"
 
