@@ -5,6 +5,8 @@ CREATE TABLE pois (
     geometry geometry
 );
 
+SELECT UpdateGeometrySRID('pois', 'geometry', 3857);
+
 -- Note that nonprivate_building filters some pois such as sports_centre as 
 -- sports centre is not a building 
 CREATE OR REPLACE VIEW nonprivate_building AS

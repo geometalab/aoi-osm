@@ -7,6 +7,8 @@ CREATE TABLE preclusters (
   dbscan_minPts integer
 );
 
+SELECT UpdateGeometrySRID('preclusters', 'hull', 3857);
+
 INSERT INTO preclusters(hull, area, pois_count) (
   WITH clustered_pois AS (
     SELECT geometry, ST_ClusterDBSCAN(geometry, 100, 3) over () as cid FROM pois

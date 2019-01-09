@@ -1,4 +1,4 @@
-FROM python:3.6-stretch
+FROM python:3.7-stretch
 
 RUN wget http://download.osgeo.org/libspatialindex/spatialindex-src-1.8.5.tar.gz
 RUN tar -xvf spatialindex-src-1.8.5.tar.gz

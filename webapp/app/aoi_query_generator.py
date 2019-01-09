@@ -1,8 +1,4 @@
 from pyproj import Proj, transform
-from app.html_map import generate_map_html
-from ipywidgets.embed import embed_minimal_html
-import gmaps
-import geojson
 import osmnx as ox
 import networkx as nx
 import operator
@@ -91,11 +87,11 @@ class AoiQueryGenerator():
     def clusters_and_hulls_query(self):
         return f"""
         WITH clusters AS ({self.clusters_query()}),
-        hulls AS ({self.hulls_query()}
+        hulls AS ({self.hulls_query()})
         SELECT cid, geometry FROM clusters
         UNION ALL
         SELECT cid, geometry FROM hulls
-            """
+        """
 
     def network_centrality_query(self):
         return self.extended_hulls_query() + """
@@ -155,7 +151,7 @@ class AoiQueryGenerator():
             WHERE (water IS NOT NULL OR waterway IS NOT NULL)
                   AND (tunnel IS NULL OR tunnel = 'no')
             AND st_intersects(way, hulls.geometry)
-        ), 'GEOMETRYCOLLECTION EMPTY'::geometry)) AS geometry
+        ), ST_GeomFromText('GEOMETRYCOLLECTION EMPTY', 3857))) AS geometry
         FROM hulls""".format(hulls_query=hulls_query)
 
     def sanitize_aois_query(self, aois_query):
