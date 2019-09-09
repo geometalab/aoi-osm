@@ -2,7 +2,7 @@
 
 ### About this repository
 
-This repository contains the (minimally) maintained source code which mainly generates Areas-of-Interest (AOI) for and with OpenStreetMap. This code was initially developped in a master thesis by Koster (2018) at Geometa Lab HSR.
+This repository contains the (minimally) maintained source code which mainly generates Areas-of-Interest (AOI) for and with OpenStreetMap. This code was initially developped during a master thesis by Philipp Koster (2018) at Geometa Lab HSR.
 
 There are following main directories with individual READMEs:
 
