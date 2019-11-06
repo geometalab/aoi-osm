@@ -7,9 +7,14 @@ To run the web application locally, the following steps are necessary:
 
 Build the docker image:
 ```bash
+# copy and alter configuration as necessary
+cp webapp/.env.example webapp/.env
+
+# build docker image
 docker-compose build webapp
 ```
-Filtering the `osm.pbf` (optional):
+
+### Filtering the `osm.pbf` (optional):
 
 Since not all OSM elements are necessary for generating AOIs, one can filter
 the `osm.pbf` file before importing it. For that, osmfilter can be used. An
@@ -44,7 +49,7 @@ docker-compose run --rm webapp python create_aois.py tmp/aois.geojson
 ```
 The AOIs extract is created and will be found in the `./tmp` directory with file name of `aois.geojson`
 
-`--clip-boundary-path` argument clips the exported AOIs to those that intersects the boundary specified by 
+`--clip-boundary-path` argument clips the exported AOIs to those that intersects the boundary specified by
 Rapperswil-Jona_AL8.GeoJSON (GeoJSON file can be downloaded at https://wambachers-osm.website/boundaries/
 and the file must contain only one geometry).
 
@@ -61,4 +66,3 @@ To alter the PostgreSQL configuration, the file `postgres/alter_config.sh` can b
  newly created docker container, with an empty `posgres/storage` directory.
 
 Alternatively connect to the database yourself and execute the commands manually.
-
