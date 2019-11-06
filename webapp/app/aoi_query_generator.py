@@ -160,7 +160,7 @@ class AoiQueryGenerator():
         return """
         WITH aois AS ({aois_query}),
         sanitized_aois AS(
-            SELECT ST_Simplify((ST_Dump(ST_Union(geometry))).geom, 5) AS geometry FROM aois
+            SELECT ST_Simplify((ST_Dump(ST_Union(ST_MakeValid(ST_Buffer(geometry, 0.00001))))).geom, 5) AS geometry FROM aois
         )
         SELECT * FROM sanitized_aois WHERE ST_IsValid(geometry) AND NOT ST_IsEmpty(geometry)
         """.format(aois_query=aois_query)
